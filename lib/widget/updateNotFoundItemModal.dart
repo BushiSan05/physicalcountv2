@@ -333,9 +333,9 @@ updateNotFoundItemModal(
                                       ? "lot_number = '${lotnoController.text.trim().toUpperCase()}',"
                                       : "lot_number = NULL,") +
                               // 'batch_number = "${batnoController.text.trim()}", '
-                              'expiry = ${formattedExpiryDate != null
-                                  ? "$formattedExpiryDate"
-                                  : 'NULL'},' +
+                              "expiry = ${formattedExpiryDate != null
+                                      ? "'$formattedExpiryDate'"
+                                      : 'NULL'},"
                               'qty = "${qtyController.text.trim()}"');
                           Navigator.pop(context);
                           Fluttertoast.showToast(msg: 'Successfully Edited!',
