@@ -334,7 +334,7 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                                           fontWeight:
                                                           FontWeight.bold)),
                                                   TextSpan(
-                                                      text: _items2[index]['lotno'],
+                                                      text: _items2[index]['lot_number'],
                                                       style: TextStyle(
                                                           fontSize: 14,
                                                           color: Colors.black))
