@@ -136,53 +136,53 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                         fontWeight: FontWeight.bold)),
                 WidgetSpan(
                     child: SizedBox.fromSize(
-                  size: Size(98, 22),
-                    child: IconButton(
-                    icon: new Icon(Icons.search, color: Colors.black),
-                    padding: EdgeInsets.only(left: 0),
-                    onPressed: () {
-                      _refreshItemList();
-                      showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (BuildContext context) {
-                          // return object of type Dialog
-                          return CupertinoAlertDialog(
-                            title: new Text("Search item"),
-                            content: new CupertinoTextField(
-                              onSubmitted: (value){
-                                onSearched(value);
-                                Navigator.of(context).pop();
-                              },
-                              keyboardType: TextInputType.number,
-                              controller: _textController,
-                              autofocus: true,
-                              //  onChanged: _onSearched,
-                            ),
-                            actions: <Widget>[
-                              new TextButton(
-                                child: new Text("Search"),
-                                onPressed: () {
-                                  onSearched(_textController.text.trim());
-                                  print("SEARCHED ITEM: "+_textController.text.trim());
-                                  _textController.clear();
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              new TextButton(
-                                child: new Text("Close"),
-                                onPressed: () {
-                                  _refreshItemList();
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
+                      size: Size(98, 22),
+                      child: IconButton(
+                        icon: new Icon(Icons.search, color: Colors.black),
+                        padding: EdgeInsets.only(left: 0),
+                        onPressed: () {
+                          _refreshItemList();
+                          showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (BuildContext context) {
+                              // return object of type Dialog
+                              return CupertinoAlertDialog(
+                                title: new Text("Search item"),
+                                content: new CupertinoTextField(
+                                  onSubmitted: (value){
+                                    onSearched(value);
+                                    Navigator.of(context).pop();
+                                  },
+                                  keyboardType: TextInputType.number,
+                                  controller: _textController,
+                                  autofocus: true,
+                                  //  onChanged: _onSearched,
+                                ),
+                                actions: <Widget>[
+                                  new TextButton(
+                                    child: new Text("Search"),
+                                    onPressed: () {
+                                      onSearched(_textController.text.trim());
+                                      print("SEARCHED ITEM: "+_textController.text.trim());
+                                      _textController.clear();
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  new TextButton(
+                                    child: new Text("Close"),
+                                    onPressed: () {
+                                      _refreshItemList();
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                  ),
-                ))
+                      ),
+                    ))
               ],
             ),
           ),
@@ -199,708 +199,708 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
             _loading
                 ? loading()
                 : _notSynced.length > 0
-                    ? Expanded(
-                        child: Scrollbar(
+                ? Expanded(
+              child: Scrollbar(
 //==============================================================================================================================
- //<-------------------------------------SEARCH LISTVIEW FOR SCANNED ITEMS----------------------------------------------------------------->
+                //<-------------------------------------SEARCH LISTVIEW FOR SCANNED ITEMS----------------------------------------------------------------->
 //================================================================================================================================
-                          child: listStat == true
-                              ? ListView.builder(
-                                  itemCount: _notSynced2.length,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20.0, right: 20.0),
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                      text: "Datetime Scanned: ",
-                                                      style: TextStyle(fontSize: 15,
-                                                          color: Colors.blue,
-                                                          fontWeight: FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: _items2[index]['datetimecreated'],
-                                                      style: TextStyle(fontSize: 15,
-                                                          color: Colors.black))
-                                                ],
-                                              ),
-                                            ),
-                                            RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                      text: "Datetime Saved: ",
-                                                      style: TextStyle(fontSize: 15,
-                                                          color: Colors.blue,
-                                                          fontWeight: FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: _items2[index]['datetimesaved'],
-                                                      style: TextStyle(fontSize: 15,
-                                                          color: Colors.black))
-                                                ],
-                                              ),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Flexible(
-                                                  child: Text(_items2[index]['description'],
-                                                    style: TextStyle(fontSize: 25),
-                                                    // maxLines: 1,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            _items2[index]['description'] != _items2[index]['desc'] && _items2[index]['desc'] != "" ?
-                                            Row(
-                                              children: [
-                                                Flexible(
-                                                  child: Text(_items2[index]['desc'],
-                                                    style: TextStyle(fontSize: 20),
-                                                    // maxLines: 1,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ],
-                                            ):
-                                            SizedBox(),
-                                            RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(text: "Barcode: ",
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: Colors.blue,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: _items2[index]['barcode'],
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: Colors.black))
-                                                ],
-                                              ),
-                                            ),
-                                            RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(text: "Itemcode: ",
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: Colors.blue,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: _items2[index]['itemcode'],
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: Colors.black))
-                                                ],
-                                              ),
-                                            ),
-                                            RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(text: "Unit of Measure: ",
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: Colors.blue,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: _items2[index]['uom'],
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: Colors.black))
-                                                ],
-                                              ),
-                                            ),
-                                            RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                      text: "Lot/Batch Number: ",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.blue,
-                                                          fontWeight:
-                                                          FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: _items2[index]['lot_number'],
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.black))
-                                                ],
-                                              ),
-                                            ),
-                                            // RichText(
-                                            //   text: TextSpan(
-                                            //     children: [
-                                            //       TextSpan(
-                                            //           text: "Batch Number: ",
-                                            //           style: TextStyle(
-                                            //               fontSize: 14,
-                                            //               color: Colors.blue,
-                                            //               fontWeight:
-                                            //               FontWeight.bold)),
-                                            //       TextSpan(
-                                            //           text: _items2[index]['batch_number'],
-                                            //           style: TextStyle(
-                                            //               fontSize: 14,
-                                            //               color: Colors.black))
-                                            //     ],
-                                            //   ),
-                                            // ),
-                                            GlobalVariables.countType == 'ANNUAL'
-                                                ? RichText(
-                                                    text: TextSpan(
-                                                      children: [
-                                                        TextSpan(
-                                                            text: "Expiry Date: ",
-                                                            style: TextStyle(fontSize: 15,
-                                                                color: Colors.blue,
-                                                                fontWeight: FontWeight.bold)
-                                                        ),
-                                                        TextSpan(
-                                                          text: _items2[index]['expiry'],
-                                                              // ? _items2[index]['expiry'] // Assuming _items[index].expiry is a String
-                                                              // : "null",
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: Colors.black,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  )
-                                                : SizedBox(),
-                                            RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                      text: "Quantity: ",
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: Colors.blue,
-                                                          fontWeight: FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: _items2[index]['qty'],
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: Colors.black))
-                                                ],
-                                              ),
-                                            ),
-                                            ableEditDelete ?
-                                            Row(
-                                              children: [
-                                                Spacer(),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 8.0),
-                                                  child: ElevatedButton(
-                                                    style: ElevatedButton.styleFrom(
-                                                            primary: Colors.yellow[700]),
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(CupertinoIcons.pencil),
-                                                        Text("Edit"),
-                                                      ],
-                                                    ),
-                                                    onPressed: () async {
-                                                      if (_items2[index]['exported']!= 'EXPORTED') {
-                                                        customLogicalModal(
-                                                          context,
-                                                          Text(
-                                                              "Are you sure you want to edit this item?"),
-                                                          () => Navigator.pop(
-                                                              context),
-                                                          () async {
-                                                            Navigator.pop(
-                                                                context);
-                                                            await updateItemModal(
-                                                              context,
-                                                              _sqfliteDBHelper,
-                                                              "[LOGIN][Audit scan ID to update scanned item quantity.]",
-                                                              _items2[index]['id'].toString(),
-                                                              _items2[index]['description'].toString(),
-                                                              _items2[index]['desc'].toString(),
-                                                              _items2[index]['barcode'].toString(),
-                                                              _items2[index]['itemcode'].toString(),
-                                                              _items2[index]['uom'].toString(),
-                                                              _items2[index]['lotno'].toString(),
-                                                              // _items2[index]['batno'].toString(),
-                                                              _items2[index]['expiry'].toString(),
-                                                              _items2[index]['qty'].toString(),
-                                                              _items2[index]['conqty'].toString(),
-                                                            );
-                                                            _refreshItemList();
-                                                          },
-                                                        );
-                                                      } else {
-                                                        instantMsgModal(
-                                                            context,
-                                                            Icon(
-                                                              CupertinoIcons.exclamationmark_circle,
-                                                              color: Colors.red,
-                                                              size: 40,
-                                                            ),
-                                                            Text("This item is already synced, you cannot edit synced item."));
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 8.0),
-                                                  child: ElevatedButton(
-                                                    style: ElevatedButton.styleFrom(primary: Colors.red),
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(CupertinoIcons.trash),
-                                                        Text("Delete"),
-                                                      ],
-                                                    ),
-                                                    onPressed: () async {
-                                                      if ( _items2[index]['exported'].toString()!= 'EXPORTED') {
-                                                        customLogicalModal(
-                                                          context,
-                                                          Text("Are you sure you want to delete this item?"),
-                                                          () => Navigator.pop(context),
-                                                          () async {
-                                                            Navigator.pop(context);
-                                                            var dtls = "[LOGIN][Audit scan ID to delete scanned item.]";
-                                                            GlobalVariables.isAuditLogged = false;
-                                                            await scanAuditModal(context, _sqfliteDBHelper, dtls);
-                                                            if (GlobalVariables.isAuditLogged == true) {
-                                                              //delte code here
-                                                              delete( _items2[index]['id'],index);
-                                                              Fluttertoast.showToast(msg: 'Item Successfully Deleted!',
-                                                                  toastLength: Toast.LENGTH_LONG,
-                                                                  gravity: ToastGravity.BOTTOM,
-                                                                  backgroundColor: Colors.black54,
-                                                                  textColor: Colors.white,
-                                                                  fontSize: 16.0);
-                                                            }
-                                                          },
-                                                        );
-                                                      } else {
-                                                        instantMsgModal(context,
-                                                            Icon(CupertinoIcons.exclamationmark_circle,
-                                                              color: Colors.red,
-                                                              size: 40,
-                                                            ),
-                                                            Text("This item is already synced, you cannot remove synced item."));
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                              ],
-                                            )
-                                            : SizedBox(),
-                                            Row(
-                                              children: [
-                                                Spacer(),
-                                                Icon(_items2[index]['exported'].toString() == 'EXPORTED'
-                                                      ? CupertinoIcons.checkmark_alt_circle_fill
-                                                      : CupertinoIcons.info_circle_fill,
-                                                  color: _items2[index]['exported'].toString() == 'EXPORTED'
-                                                          ? Colors.green
-                                                          : Colors.red,
-                                                ),
-                                                Text( _items2[index]['exported'].toString() == 'EXPORTED'
-                                                        ? "Synced to Server Database"
-                                                        : "Not synced to Server Database",
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        color: Colors.black))
-                                              ],
-                                            ),
-                                            SizedBox(height: 5),
-                                            Divider(),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                )
-//================================================================================================================================//
-//<------------------------------------LISTVIEW FOR SCANNED ITEMS--------------------------------------------------------------------------------->
-//=================================================================================================================================//
-                              : ListView.builder(
-                                  itemCount: _items.length,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20.0, right: 20.0),
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                      text: "Datetime Scanned: ",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.blue,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: "${_items[index].dateTimeCreated!}",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.black))
-                                                ],
-                                              ),
-                                            ),
-                                            RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                      text: "Datetime Saved: ",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.blue,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: "${_items[index].dateTimeSaved!}",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.black))
-                                                ],
-                                              ),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Flexible(
-                                                  child: Text(
-                                                    _items[index].description!,
-                                                    style:
-                                                        TextStyle(fontSize: 23),
-                                                    // maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            _items[index].description != _items[index].desc && _items[index].desc != "" ?
-                                            Row(
-                                              children: [
-                                                Flexible(
-                                                  child: Text(
-                                                    _items[index].desc!,
-                                                    style:
-                                                    TextStyle(fontSize: 20),
-                                                    // maxLines: 1,
-                                                    overflow:
-                                                    TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              ],
-                                            ):
-                                            SizedBox(),
-                                            RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                      text: "Barcode: ",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.blue,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: "${_items[index].barcode!}",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.black))
-                                                ],
-                                              ),
-                                            ),
-                                            RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                      text: "Itemcode: ",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.blue,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: "${_items[index].itemcode!}",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.black))
-                                                ],
-                                              ),
-                                            ),
-                                            RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                      text: "Unit of Measure: ",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.blue,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: "${_items[index].uom!}",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.black))
-                                                ],
-                                              ),
-                                            ),
-                                            RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                      text: "Lot/Batch Number: ",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.blue,
-                                                          fontWeight:
-                                                          FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: _items[index].lotno != null
-                                                          ? _items[index].lotno
-                                                          : "null",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.black))
-                                                ],
-                                              ),
-                                            ),
-                                            // RichText(
-                                            //   text: TextSpan(
-                                            //     children: [
-                                            //       TextSpan(
-                                            //           text: "Batch Number: ",
-                                            //           style: TextStyle(
-                                            //               fontSize: 14,
-                                            //               color: Colors.blue,
-                                            //               fontWeight:
-                                            //               FontWeight.bold)),
-                                            //       TextSpan(
-                                            //           text: "${_items[index].batno!}",
-                                            //           style: TextStyle(
-                                            //               fontSize: 14,
-                                            //               color: Colors.black))
-                                            //     ],
-                                            //   ),
-                                            // ),
-                                            GlobalVariables.countType == 'ANNUAL'
-                                            ? RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                TextSpan(
-                                                text: "Expiry Date: ",
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.blue,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                                  TextSpan(
-                                                    text: _items[index].expiry != null
-                                                        ? formatDate(_items[index].expiry)
-                                                        : "null",
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.black,
-                                                    ),
-                                                  ),
-
-                                                ],
-                                              ),
-                                            )
-                                                : SizedBox(),
-                                            RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                      text: "Quantity: ",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.blue,
-                                                          fontWeight: FontWeight.bold)),
-                                                  TextSpan(
-                                                      text: "${_items[index].qty!}",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: Colors.black))
-                                                ],
-                                              ),
-                                            ),
-                                            ableEditDelete ?
-                                            Row(
-                                              children: [
-                                                Spacer(),
-                                                Padding(
-                                                  padding: const EdgeInsets.only(
-                                                          right: 8.0),
-                                                  child: ElevatedButton(
-                                                    style: ElevatedButton
-                                                        .styleFrom(primary: Colors.yellow[700]),
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(CupertinoIcons.pencil),
-                                                        Text("Edit"),
-                                                      ],
-                                                    ),
-                                                    onPressed: () async {
-                                                      if (_items[index].exported != 'EXPORTED') {
-                                                        customLogicalModal(
-                                                          context,
-                                                          Text("Are you sure you want to edit this item?"),
-                                                          () => Navigator.pop(context),
-                                                          () async {
-                                                            Navigator.pop(context);
-                                                            await updateItemModal(
-                                                              context,
-                                                              _sqfliteDBHelper,
-                                                              "[LOGIN][Audit scan ID to update scanned item quantity.]",
-                                                              _items[index].id!.toString(),
-                                                              _items[index].description!,
-                                                              _items[index].desc!,
-                                                              _items[index].barcode!,
-                                                              _items[index].itemcode!,
-                                                              _items[index].uom!,
-                                                              _items[index].lotno ?? '',
-                                                              // _items[index].batno!,
-                                                              _items[index].expiry ?? '',
-                                                              _items[index].qty!,
-                                                              _items[index].conqty!,
-                                                            );
-                                                            _refreshItemList();
-                                                          },
-                                                        );
-                                                      } else {
-                                                        instantMsgModal(
-                                                            context,
-                                                            Icon(CupertinoIcons.exclamationmark_circle,
-                                                              color: Colors.red,
-                                                               size: 40,
-                                                            ),
-                                                            Text("This item is already synced, you cannot edit synced item."));
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 8.0),
-                                                  child: ElevatedButton(
-                                                    style: ElevatedButton.styleFrom(
-                                                        primary: Colors.red),
-                                                    child: Row(
-                                                      children: [
-                                                        Icon(CupertinoIcons.trash),
-                                                        Text("Delete"),
-                                                      ],
-                                                    ),
-                                                    onPressed: () async {
-                                                      if (_items[index].exported != 'EXPORTED') {
-                                                        customLogicalModal(context,
-                                                          Text("Are you sure you want to delete this item?"),
-                                                          () => Navigator.pop(context), () async {
-                                                          Navigator.pop(context);
-                                                            var dtls = "[LOGIN][Audit scan ID to delete scanned item.]";
-                                                            GlobalVariables.isAuditLogged = false;
-                                                            await scanAuditModal(context, _sqfliteDBHelper, dtls);
-                                                            if (GlobalVariables.isAuditLogged == true) {
-                                                              //delte code here
-                                                              delete(_items[index].id!, index);
-                                                              Fluttertoast.showToast(msg: 'Item Successfully Deleted!',
-                                                                  toastLength: Toast.LENGTH_LONG,
-                                                                  gravity: ToastGravity.BOTTOM,
-                                                                  backgroundColor: Colors.black54,
-                                                                  textColor: Colors.white,
-                                                                  fontSize: 16.0);
-                                                            }
-                                                          },
-                                                        );
-                                                      } else {
-                                                        instantMsgModal(
-                                                            context,
-                                                            Icon(
-                                                              CupertinoIcons.exclamationmark_circle,
-                                                              color: Colors.red,
-                                                              size: 40,
-                                                            ),
-                                                            Text("This item is already synced, you cannot remove synced item."));
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                              ],
-                                            )
-                                            : SizedBox(),
-                                            Row(
-                                              children: [
-                                                Spacer(),
-                                                Icon(
-                                                  _items[index].exported == 'EXPORTED'
-                                                      ? CupertinoIcons.checkmark_alt_circle_fill
-                                                      : CupertinoIcons.info_circle_fill,
-                                                  color:
-                                                  _items[index].exported == 'EXPORTED'
-                                                          ? Colors.green
-                                                          : Colors.red,
-                                                ),
-                                                Text(
-                                                    _items[index].exported == 'EXPORTED'
-                                                        ? "Synced to Server Database"
-                                                        : "Not synced to Server Database",
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        color: Colors.black))
-                                              ],
-                                            ),
-                                            SizedBox(height: 5),
-                                            Divider(),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                        ),
-                      )
-                    : Center(
+                child: listStat == true
+                    ? ListView.builder(
+                  itemCount: _notSynced2.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20.0, right: 20.0),
+                      child: Container(
+                        width:
+                        MediaQuery.of(context).size.width,
                         child: Column(
+                          crossAxisAlignment:
+                          CrossAxisAlignment.start,
                           children: [
-                            Icon(
-                              CupertinoIcons.doc,
-                              size: 100,
-                              color: Colors.grey,
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: "Datetime Scanned: ",
+                                      style: TextStyle(fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.bold)),
+                                  TextSpan(
+                                      text: _items2[index]['datetimecreated'],
+                                      style: TextStyle(fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
                             ),
-                            Text("Oops...It's empty in here!",
-                              style: TextStyle(fontSize: 25, color: Colors.grey),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: "Datetime Saved: ",
+                                      style: TextStyle(fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.bold)),
+                                  TextSpan(
+                                      text: _items2[index]['datetimesaved'],
+                                      style: TextStyle(fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(_items2[index]['description'],
+                                    style: TextStyle(fontSize: 25),
+                                    // maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            _items2[index]['description'] != _items2[index]['desc'] && _items2[index]['desc'] != "" ?
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(_items2[index]['desc'],
+                                    style: TextStyle(fontSize: 20),
+                                    // maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ):
+                            SizedBox(),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(text: "Barcode: ",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight:
+                                          FontWeight.bold)),
+                                  TextSpan(
+                                      text: _items2[index]['barcode'],
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(text: "Itemcode: ",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight:
+                                          FontWeight.bold)),
+                                  TextSpan(
+                                      text: _items2[index]['itemcode'],
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(text: "Unit of Measure: ",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight:
+                                          FontWeight.bold)),
+                                  TextSpan(
+                                      text: _items2[index]['uom'],
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: "Lot/Batch Number: ",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight:
+                                          FontWeight.bold)),
+                                  TextSpan(
+                                      text: _items2[index]['lot_number'],
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
+                            ),
+                            // RichText(
+                            //   text: TextSpan(
+                            //     children: [
+                            //       TextSpan(
+                            //           text: "Batch Number: ",
+                            //           style: TextStyle(
+                            //               fontSize: 14,
+                            //               color: Colors.blue,
+                            //               fontWeight:
+                            //               FontWeight.bold)),
+                            //       TextSpan(
+                            //           text: _items2[index]['batch_number'],
+                            //           style: TextStyle(
+                            //               fontSize: 14,
+                            //               color: Colors.black))
+                            //     ],
+                            //   ),
+                            // ),
+                            GlobalVariables.countType == 'ANNUAL'
+                                ? RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: "Expiry Date: ",
+                                      style: TextStyle(fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.bold)
+                                  ),
+                                  TextSpan(
+                                    text: _items2[index]['expiry'],
+                                    // ? _items2[index]['expiry'] // Assuming _items[index].expiry is a String
+                                    // : "null",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             )
+                                : SizedBox(),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: "Quantity: ",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.bold)),
+                                  TextSpan(
+                                      text: _items2[index]['qty'],
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
+                            ),
+                            ableEditDelete ?
+                            Row(
+                              children: [
+                                Spacer(),
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.only(
+                                      right: 8.0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        primary: Colors.yellow[700]),
+                                    child: Row(
+                                      children: [
+                                        Icon(CupertinoIcons.pencil),
+                                        Text("Edit"),
+                                      ],
+                                    ),
+                                    onPressed: () async {
+                                      if (_items2[index]['exported']!= 'EXPORTED') {
+                                        customLogicalModal(
+                                          context,
+                                          Text(
+                                              "Are you sure you want to edit this item?"),
+                                              () => Navigator.pop(
+                                              context),
+                                              () async {
+                                            Navigator.pop(
+                                                context);
+                                            await updateItemModal(
+                                              context,
+                                              _sqfliteDBHelper,
+                                              "[LOGIN][Audit scan ID to update scanned item quantity.]",
+                                              _items2[index]['id'].toString(),
+                                              _items2[index]['description'].toString(),
+                                              _items2[index]['desc'].toString(),
+                                              _items2[index]['barcode'].toString(),
+                                              _items2[index]['itemcode'].toString(),
+                                              _items2[index]['uom'].toString(),
+                                              _items2[index]['lot_number'].toString(),
+                                              // _items2[index]['batno'].toString(),
+                                              _items2[index]['expiry'].toString(),
+                                              _items2[index]['qty'].toString(),
+                                              _items2[index]['conqty'].toString(),
+                                            );
+                                            _refreshItemList();
+                                          },
+                                        );
+                                      } else {
+                                        instantMsgModal(
+                                            context,
+                                            Icon(
+                                              CupertinoIcons.exclamationmark_circle,
+                                              color: Colors.red,
+                                              size: 40,
+                                            ),
+                                            Text("This item is already synced, you cannot edit synced item."));
+                                      }
+                                    },
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.only(
+                                      right: 8.0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(primary: Colors.red),
+                                    child: Row(
+                                      children: [
+                                        Icon(CupertinoIcons.trash),
+                                        Text("Delete"),
+                                      ],
+                                    ),
+                                    onPressed: () async {
+                                      if ( _items2[index]['exported'].toString()!= 'EXPORTED') {
+                                        customLogicalModal(
+                                          context,
+                                          Text("Are you sure you want to delete this item?"),
+                                              () => Navigator.pop(context),
+                                              () async {
+                                            Navigator.pop(context);
+                                            var dtls = "[LOGIN][Audit scan ID to delete scanned item.]";
+                                            GlobalVariables.isAuditLogged = false;
+                                            await scanAuditModal(context, _sqfliteDBHelper, dtls);
+                                            if (GlobalVariables.isAuditLogged == true) {
+                                              //delte code here
+                                              delete( _items2[index]['id'],index);
+                                              Fluttertoast.showToast(msg: 'Item Successfully Deleted!',
+                                                  toastLength: Toast.LENGTH_LONG,
+                                                  gravity: ToastGravity.BOTTOM,
+                                                  backgroundColor: Colors.black54,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16.0);
+                                            }
+                                          },
+                                        );
+                                      } else {
+                                        instantMsgModal(context,
+                                            Icon(CupertinoIcons.exclamationmark_circle,
+                                              color: Colors.red,
+                                              size: 40,
+                                            ),
+                                            Text("This item is already synced, you cannot remove synced item."));
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
+                            )
+                                : SizedBox(),
+                            Row(
+                              children: [
+                                Spacer(),
+                                Icon(_items2[index]['exported'].toString() == 'EXPORTED'
+                                    ? CupertinoIcons.checkmark_alt_circle_fill
+                                    : CupertinoIcons.info_circle_fill,
+                                  color: _items2[index]['exported'].toString() == 'EXPORTED'
+                                      ? Colors.green
+                                      : Colors.red,
+                                ),
+                                Text( _items2[index]['exported'].toString() == 'EXPORTED'
+                                    ? "Synced to Server Database"
+                                    : "Not synced to Server Database",
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.black))
+                              ],
+                            ),
+                            SizedBox(height: 5),
+                            Divider(),
                           ],
                         ),
                       ),
+                    );
+                  },
+                )
+//================================================================================================================================//
+//<------------------------------------LISTVIEW FOR SCANNED ITEMS--------------------------------------------------------------------------------->
+//=================================================================================================================================//
+                    : ListView.builder(
+                  itemCount: _items.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                          left: 20.0, right: 20.0),
+                      child: Container(
+                        width:
+                        MediaQuery.of(context).size.width,
+                        child: Column(
+                          crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: "Datetime Scanned: ",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight:
+                                          FontWeight.bold)),
+                                  TextSpan(
+                                      text: "${_items[index].dateTimeCreated!}",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: "Datetime Saved: ",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight:
+                                          FontWeight.bold)),
+                                  TextSpan(
+                                      text: "${_items[index].dateTimeSaved!}",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    _items[index].description!,
+                                    style:
+                                    TextStyle(fontSize: 25),
+                                    // maxLines: 1,
+                                    overflow:
+                                    TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            _items[index].description != _items[index].desc && _items[index].desc != "" ?
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    _items[index].desc!,
+                                    style:
+                                    TextStyle(fontSize: 20),
+                                    // maxLines: 1,
+                                    overflow:
+                                    TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ):
+                            SizedBox(),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: "Barcode: ",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight:
+                                          FontWeight.bold)),
+                                  TextSpan(
+                                      text: "${_items[index].barcode!}",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: "Itemcode: ",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight:
+                                          FontWeight.bold)),
+                                  TextSpan(
+                                      text: "${_items[index].itemcode!}",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: "Unit of Measure: ",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight:
+                                          FontWeight.bold)),
+                                  TextSpan(
+                                      text: "${_items[index].uom!}",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: "Lot/Batch Number: ",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight:
+                                          FontWeight.bold)),
+                                  TextSpan(
+                                      text: _items[index].lotno != null
+                                          ? _items[index].lotno
+                                          : "null",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
+                            ),
+                            // RichText(
+                            //   text: TextSpan(
+                            //     children: [
+                            //       TextSpan(
+                            //           text: "Batch Number: ",
+                            //           style: TextStyle(
+                            //               fontSize: 14,
+                            //               color: Colors.blue,
+                            //               fontWeight:
+                            //               FontWeight.bold)),
+                            //       TextSpan(
+                            //           text: "${_items[index].batno!}",
+                            //           style: TextStyle(
+                            //               fontSize: 14,
+                            //               color: Colors.black))
+                            //     ],
+                            //   ),
+                            // ),
+                            GlobalVariables.countType == 'ANNUAL'
+                                ? RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "Expiry Date: ",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: _items[index].expiry != null
+                                        ? formatDate(_items[index].expiry)
+                                        : "null",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+                            )
+                                : SizedBox(),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: "Quantity: ",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.bold)),
+                                  TextSpan(
+                                      text: "${_items[index].qty!}",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
+                            ),
+                            ableEditDelete ?
+                            Row(
+                              children: [
+                                Spacer(),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      right: 8.0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton
+                                        .styleFrom(primary: Colors.yellow[700]),
+                                    child: Row(
+                                      children: [
+                                        Icon(CupertinoIcons.pencil),
+                                        Text("Edit"),
+                                      ],
+                                    ),
+                                    onPressed: () async {
+                                      if (_items[index].exported != 'EXPORTED') {
+                                        customLogicalModal(
+                                          context,
+                                          Text("Are you sure you want to edit this item?"),
+                                              () => Navigator.pop(context),
+                                              () async {
+                                            Navigator.pop(context);
+                                            await updateItemModal(
+                                              context,
+                                              _sqfliteDBHelper,
+                                              "[LOGIN][Audit scan ID to update scanned item quantity.]",
+                                              _items[index].id!.toString(),
+                                              _items[index].description!,
+                                              _items[index].desc!,
+                                              _items[index].barcode!,
+                                              _items[index].itemcode!,
+                                              _items[index].uom!,
+                                              _items[index].lotno ?? '',
+                                              // _items[index].batno!,
+                                              _items[index].expiry ?? '',
+                                              _items[index].qty!,
+                                              _items[index].conqty!,
+                                            );
+                                            _refreshItemList();
+                                          },
+                                        );
+                                      } else {
+                                        instantMsgModal(
+                                            context,
+                                            Icon(CupertinoIcons.exclamationmark_circle,
+                                              color: Colors.red,
+                                              size: 40,
+                                            ),
+                                            Text("This item is already synced, you cannot edit synced item."));
+                                      }
+                                    },
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.only(
+                                      right: 8.0),
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        primary: Colors.red),
+                                    child: Row(
+                                      children: [
+                                        Icon(CupertinoIcons.trash),
+                                        Text("Delete"),
+                                      ],
+                                    ),
+                                    onPressed: () async {
+                                      if (_items[index].exported != 'EXPORTED') {
+                                        customLogicalModal(context,
+                                          Text("Are you sure you want to delete this item?"),
+                                              () => Navigator.pop(context), () async {
+                                            Navigator.pop(context);
+                                            var dtls = "[LOGIN][Audit scan ID to delete scanned item.]";
+                                            GlobalVariables.isAuditLogged = false;
+                                            await scanAuditModal(context, _sqfliteDBHelper, dtls);
+                                            if (GlobalVariables.isAuditLogged == true) {
+                                              //delte code here
+                                              delete(_items[index].id!, index);
+                                              Fluttertoast.showToast(msg: 'Item Successfully Deleted!',
+                                                  toastLength: Toast.LENGTH_LONG,
+                                                  gravity: ToastGravity.BOTTOM,
+                                                  backgroundColor: Colors.black54,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16.0);
+                                            }
+                                          },
+                                        );
+                                      } else {
+                                        instantMsgModal(
+                                            context,
+                                            Icon(
+                                              CupertinoIcons.exclamationmark_circle,
+                                              color: Colors.red,
+                                              size: 40,
+                                            ),
+                                            Text("This item is already synced, you cannot remove synced item."));
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
+                            )
+                                : SizedBox(),
+                            Row(
+                              children: [
+                                Spacer(),
+                                Icon(
+                                  _items[index].exported == 'EXPORTED'
+                                      ? CupertinoIcons.checkmark_alt_circle_fill
+                                      : CupertinoIcons.info_circle_fill,
+                                  color:
+                                  _items[index].exported == 'EXPORTED'
+                                      ? Colors.green
+                                      : Colors.red,
+                                ),
+                                Text(
+                                    _items[index].exported == 'EXPORTED'
+                                        ? "Synced to Server Database"
+                                        : "Not synced to Server Database",
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.black))
+                              ],
+                            ),
+                            SizedBox(height: 5),
+                            Divider(),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            )
+                : Center(
+              child: Column(
+                children: [
+                  Icon(
+                    CupertinoIcons.doc,
+                    size: 100,
+                    color: Colors.grey,
+                  ),
+                  Text("Oops...It's empty in here!",
+                    style: TextStyle(fontSize: 25, color: Colors.grey),
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -940,11 +940,11 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
     _log.date = dateFormat.format(DateTime.now());
     _log.time = timeFormat.format(DateTime.now());
     _log.device =
-        "${GlobalVariables.deviceInfo}(${GlobalVariables.readdeviceInfo})";
+    "${GlobalVariables.deviceInfo}(${GlobalVariables.readdeviceInfo})";
     _log.user = "USER";
     _log.empid = GlobalVariables.logEmpNo;
     _log.details =
-        "[DELETE][Delete item (barcode: ${_items[index].barcode} description: ${_items[index].description})]";
+    "[DELETE][Delete item (barcode: ${_items[index].barcode} description: ${_items[index].description})]";
     await _sqfliteDBHelper.insertLog(_log);
   }
 }
