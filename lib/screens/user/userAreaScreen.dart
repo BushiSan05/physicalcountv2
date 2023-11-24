@@ -237,11 +237,13 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                             Column(
                                               children: <Widget>[
                                                 Text(
-                                                  'Count Type: ' + countData[index]['countType'],
+                                                  // 'Count Type: ' + countData[index]['countType'],
+                                                  'Count Type: ' + (index < countData.length ? countData[index]['countType'] : 'Invalid Index'),
                                                   style: TextStyle(color: Colors.deepOrange, fontSize: 12),
                                                 ),
                                                 Text(
-                                                  'Sched: ' + countData[index]['batchDate'],
+                                                  // 'Sched: ' + countData[index]['batchDate'],
+                                                  'Sched: ' + (index < countData.length ? countData[index]['batchDate'] : 'Invalid Index'),
                                                   style: TextStyle(color: Colors.deepOrange, fontSize: 12),
                                                 ),
                                               ],
