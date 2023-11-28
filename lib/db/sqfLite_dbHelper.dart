@@ -636,10 +636,10 @@ class SqfliteDBHelper {
 
   Future getCountTypeDate(String emp_no)async{
     var db = await database;
-    return db.rawQuery("SELECT user.emp_no, user.location_id, fil.batchDate, fil.countType "
-                       "FROM users AS user "
-                       "INNER JOIN filter AS fil ON user.location_id = fil.location_id "
-                       "WHERE user.emp_no = '$emp_no' ");
+    return db.rawQuery("SELECT user.emp_no, user.location_id, fil.batchDate, fil.countType, fil.ctype "
+        "FROM users AS user "
+        "INNER JOIN filter AS fil ON user.location_id = fil.location_id "
+        "WHERE user.emp_no = '$emp_no' ");
   }
 
   Future updateItemNotFoundByLocation(String locationid, String column) async {
