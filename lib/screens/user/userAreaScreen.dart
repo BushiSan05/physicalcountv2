@@ -75,6 +75,14 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
     }
   }
 
+  bool isWithinOneWeek(DateTime scheduledDate) {
+    final now = DateTime.now();
+    final oneWeekBefore = now.subtract(Duration(days: 7));
+    final oneWeekLater = now.add(Duration(days: 7));
+
+    return scheduledDate.isAfter(oneWeekBefore) && scheduledDate.isBefore(oneWeekLater);
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -150,7 +158,16 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                   itemBuilder: (context, index) {
                     var data = _assignArea;
                     var countData = countType;
-                    var cdata = ctype;
+                    var scheduledDate = DateTime.parse(countData[index]['batchDate']);
+
+                    print("Scheduled Date: $scheduledDate");
+                    print("Is Within One Week: ${isWithinOneWeek(scheduledDate)}");
+
+                    if (!isWithinOneWeek(scheduledDate)) {
+                      // Skip adding this item to the list
+                      return SizedBox.shrink();
+                    }
+
                     return Padding(
                       padding:
                       const EdgeInsets.only(right: 8.0, left: 8.0),
@@ -166,51 +183,6 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                 data[index]['section'],
                             style: TextStyle(fontSize: 20),
                           ),
-                          // Row(
-                          //   children: [
-                          //     Icon(
-                          //         data[index]['done'] == 'true'
-                          //             ? CupertinoIcons
-                          //                 .checkmark_alt_circle_fill
-                          //             : CupertinoIcons
-                          //                 .ellipsis_circle_fill,
-                          //         size: 30,
-                          //         color: data[index]['done'] == 'true'
-                          //             ? Colors.green
-                          //             : Colors.orange),
-                          //     Text(
-                          //       data[index]['rack_desc'],
-                          //       style: TextStyle(fontSize: 30),
-                          //     ),
-                          //    Container(
-                          //      padding: EdgeInsets.symmetric(horizontal: 30),
-                          //       width: MediaQuery.of(context).size.width - 180,
-                          //      child: Row(
-                          //        mainAxisAlignment: MainAxisAlignment.center,
-                          //        crossAxisAlignment: CrossAxisAlignment.center,
-                          //        children: <Widget>[
-                          //         Column(
-                          //         children: <Widget>[
-                          //           Text('Count Type: '+
-                          //               countData[index]['countType'],
-                          //             style: TextStyle(
-                          //                 color: Colors.deepOrange,
-                          //                 fontSize: 12),
-                          //           ),
-                          //           Text('Sched: '+
-                          //               countData[index]['batchDate'],
-                          //             style: TextStyle(
-                          //                 color: Colors.deepOrange,
-                          //                 fontSize: 12),
-                          //           ),
-                          //         ],
-                          //         )
-                          //        ],
-                          //      ),
-                          //    ),
-                          //     Spacer(),
-                          //   ],
-                          // ),
                           Row(
                             children: [
                               Icon(
@@ -245,7 +217,7 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                         ),
                                         Text(
                                           // 'Type: ' + cdata[index]['ctype'],
-                                          'Category: ' + (index < cdata.length ? cdata[index]['ctype'] : 'Invalid Index'),
+                                          'Category: ' + (index < countData.length ? countData[index]['ctype'] : 'Invalid Index'),
                                           style: TextStyle(color: Colors.deepOrange, fontSize: 12),
                                         ),
                                         Text(
@@ -563,11 +535,7 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
     // countType = [];
     // ctype = [];
     countType = await _sqfliteDBHelper.getCountTypeDate(GlobalVariables.logEmpNo);
-    ctype = await _sqfliteDBHelper.getCountTypeDate(GlobalVariables.logEmpNo);
 
-    // List _loc = await _sqfliteDBHelper.selectU(GlobalVariables.logEmpNo);
-    // // print(GlobalVariables.logEmpNo);
-    // print(_loc);
     if (_assignArea.length > 0 && countType.length>0) {
       //checking = false;
       if (mounted) setState(() {});
@@ -575,10 +543,8 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
       var user = int.parse(GlobalVariables.logEmpNo) * 1;
       _assignArea = await _sqfliteDBHelper.selectUserArea(user.toString(), sul.server(ServerUrl.urlCI));
       countType = await _sqfliteDBHelper.getCountTypeDate(user.toString());
-      ctype = await _sqfliteDBHelper.getCountTypeDate(user.toString());
       print(countType);
       print("-------");
-      print(ctype);
       //checking = false;
       if (mounted) setState(() {});
     }
