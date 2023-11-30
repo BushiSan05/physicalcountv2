@@ -34,7 +34,6 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
   List _assignArea = [];
   bool checking = true;
   List countType = [];
-  List ctype = [];
   bool checkingData = false;
   bool btnSyncClick = false;
   int indexClick = -1;
@@ -183,6 +182,7 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                 data[index]['section'],
                             style: TextStyle(fontSize: 20),
                           ),
+                          SizedBox(height: 10.0),
                           Row(
                             children: [
                               Icon(
