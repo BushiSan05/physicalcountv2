@@ -288,7 +288,7 @@ class SqfliteDBHelper {
   Future<List<Logs>> fetchLogs() async {
     Database db = await database;
     List<Map<String, Object?>> logs =
-        await db.query(Logs.tblLogs, orderBy: "id DESC");
+    await db.query(Logs.tblLogs, orderBy: "id DESC");
     return logs.length == 0 ? [] : logs.map((e) => Logs.fromMap(e)).toList();
   }
 //-----------------LOGS-----------------//
@@ -343,17 +343,17 @@ class SqfliteDBHelper {
     }
     List x = await db.rawQuery(
         "SELECT a.emp_no, b.business_unit, b.department, b.section, b.rack_desc, a.done, a.locked, a.location_id FROM ${User.tblUser} as a INNER JOIN ${Location.tblLocation} as b ON a.location_id = b.location_id WHERE a.emp_no = '$empno' $where");
-        //"SELECT a.emp_no, b.business_unit, b.department, b.section, b.rack_desc, a.done, a.locked, a.location_id FROM ${User.tblUser} as a INNER JOIN ${Location.tblLocation} as b ON a.location_id = b.location_id WHERE a.emp_no = '$empno'");
+    //"SELECT a.emp_no, b.business_unit, b.department, b.section, b.rack_desc, a.done, a.locked, a.location_id FROM ${User.tblUser} as a INNER JOIN ${Location.tblLocation} as b ON a.location_id = b.location_id WHERE a.emp_no = '$empno'");
 
     if (x.length > 0) {
       return db.rawQuery(
           "SELECT a.emp_no, b.business_unit, b.department, b.section, b.rack_desc, a.done, a.locked, a.location_id FROM ${User.tblUser} as a INNER JOIN ${Location.tblLocation} as b ON a.location_id = b.location_id WHERE a.emp_no = '$empno' $where");
-          //"SELECT a.emp_no, b.business_unit, b.department, b.section, b.rack_desc, a.done, a.locked, a.location_id FROM ${User.tblUser} as a INNER JOIN ${Location.tblLocation} as b ON a.location_id = b.location_id WHERE a.emp_no = '$empno'");
+      //"SELECT a.emp_no, b.business_unit, b.department, b.section, b.rack_desc, a.done, a.locked, a.location_id FROM ${User.tblUser} as a INNER JOIN ${Location.tblLocation} as b ON a.location_id = b.location_id WHERE a.emp_no = '$empno'");
     } else {
       var user = int.parse(empno) * 1;
       return db.rawQuery(
           "SELECT a.emp_no, b.business_unit, b.department, b.section, b.rack_desc, a.done, a.locked, a.location_id FROM ${User.tblUser} as a INNER JOIN ${Location.tblLocation} as b ON a.location_id = b.location_id WHERE a.emp_no LIKE '%$user%' $where");
-          //"SELECT a.emp_no, b.business_unit, b.department, b.section, b.rack_desc, a.done, a.locked, a.location_id FROM ${User.tblUser} as a INNER JOIN ${Location.tblLocation} as b ON a.location_id = b.location_id WHERE a.emp_no LIKE '%$user%'");
+      //"SELECT a.emp_no, b.business_unit, b.department, b.section, b.rack_desc, a.done, a.locked, a.location_id FROM ${User.tblUser} as a INNER JOIN ${Location.tblLocation} as b ON a.location_id = b.location_id WHERE a.emp_no LIKE '%$user%'");
     }
   }
 
@@ -489,7 +489,7 @@ class SqfliteDBHelper {
     // print(client.rawQuery(
     //     "SELECT * FROM itemsCount WHERE barcode LIKE '%$text%' AND exported = '' ",
     //     null));
-     return client.rawQuery("SELECT * FROM itemsCount WHERE barcode LIKE '%$text%' AND exported = '' AND empno = '${GlobalVariables.logEmpNo}' AND business_unit = '${GlobalVariables.currentBusinessUnit}' AND department = '${GlobalVariables.currentDepartment}' AND section  = '${GlobalVariables.currentSection}' AND rack_desc  = '${GlobalVariables.currentRackDesc}' AND location_id = '${GlobalVariables.currentLocationID}'", null);
+    return client.rawQuery("SELECT * FROM itemsCount WHERE barcode LIKE '%$text%' AND exported = '' AND empno = '${GlobalVariables.logEmpNo}' AND business_unit = '${GlobalVariables.currentBusinessUnit}' AND department = '${GlobalVariables.currentDepartment}' AND section  = '${GlobalVariables.currentSection}' AND rack_desc  = '${GlobalVariables.currentRackDesc}' AND location_id = '${GlobalVariables.currentLocationID}'", null);
   }
 
   Future searchNfItems(value)async{
@@ -631,15 +631,29 @@ class SqfliteDBHelper {
 
   Future getCountType(location_id)async{
     var db = await database;
-     return db.rawQuery("SELECT countType FROM filter WHERE location_id = '$location_id' ");
+    return db.rawQuery("SELECT countType FROM filter WHERE location_id = '$location_id' ");
   }
 
-  Future getCountTypeDate(String emp_no)async{
+  Future getCountTypeDate(String emp_no, String business_unit)async{
     var db = await database;
+
+    // Calculate the date range for a week before and after the current date
+    DateTime currentDate = DateTime.now();
+    DateTime weekBefore = currentDate.subtract(Duration(days: 7));
+    DateTime weekAfter = currentDate.add(Duration(days: 7));
+
+    // Format the dates to the SQLite date format (YYYY-MM-DD)
+    String formattedWeekBefore = weekBefore.toIso8601String().split('T')[0];
+    String formattedWeekAfter = weekAfter.toIso8601String().split('T')[0];
+
+
     return db.rawQuery("SELECT user.emp_no, user.location_id, fil.batchDate, fil.countType, fil.ctype "
         "FROM users AS user "
         "INNER JOIN filter AS fil ON user.location_id = fil.location_id "
-        "WHERE user.emp_no = '$emp_no' ");
+        "INNER JOIN locations AS loc ON user.location_id = loc.location_id "
+        "WHERE loc.business_unit = '$business_unit' "
+    // "AND fil.batchDate BETWEEN '$formattedWeekBefore' AND '$formattedWeekAfter'"
+        "AND user.emp_no = '$emp_no' ");
   }
 
   Future updateItemNotFoundByLocation(String locationid, String column) async {
@@ -709,19 +723,19 @@ class SqfliteDBHelper {
   }
 
 //-----------------ITEMCOUNT-----------------//
- Future getAuditInfo(String id)async{
+  Future getAuditInfo(String id)async{
     var db= await database;
     return db.rawQuery("SELECT * FROM audit where emp_no = '$id'");
- }
+  }
 
- Future getAuditTrail()async {
-   var db = await database;
-   return db.rawQuery("SELECT date, time, device, user, empid, details FROM ${Logs.tblLogs} WHERE uploaded = 'false' ");
- }
+  Future getAuditTrail()async {
+    var db = await database;
+    return db.rawQuery("SELECT date, time, device, user, empid, details FROM ${Logs.tblLogs} WHERE uploaded = 'false' ");
+  }
 
- Future updateTblAuditTrail()async{
-   var db = await database;
-   return db.rawQuery("UPDATE ${Logs.tblLogs} SET uploaded = 'true' WHERE uploaded = 'false' ");
- }
+  Future updateTblAuditTrail()async{
+    var db = await database;
+    return db.rawQuery("UPDATE ${Logs.tblLogs} SET uploaded = 'true' WHERE uploaded = 'false' ");
+  }
 
 }

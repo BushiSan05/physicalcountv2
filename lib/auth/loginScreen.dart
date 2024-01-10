@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -55,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     // emppinController.text="105313324137";
     // empnoController.text="01000042072";
 
-   // btnEnabled=true;
+    // btnEnabled=true;
     myFocusNodeEmpNo = FocusNode();
     myFocusNodeEmpPin = FocusNode();
     myFocusNodeEmpNo.requestFocus();
@@ -264,25 +263,25 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           children: <Widget>[
                             empnoController.text.isNotEmpty
                                 ? IconButton(
-                                    onPressed: () {
-                                      if (mounted)
-                                        setState(() {
-                                          empnoController.clear();
-                                          btnEnabled = false;
-                                        });
-                                    },
-                                    icon: Icon(
-                                      CupertinoIcons.xmark_circle_fill,
-                                      color: Colors.red,
-                                    ),
-                                  )
+                              onPressed: () {
+                                if (mounted)
+                                  setState(() {
+                                    empnoController.clear();
+                                    btnEnabled = false;
+                                  });
+                              },
+                              icon: Icon(
+                                CupertinoIcons.xmark_circle_fill,
+                                color: Colors.red,
+                              ),
+                            )
                                 : SizedBox(),
                             IconButton(
                               icon: !obscureENumber
                                   ? Icon(CupertinoIcons.eye_fill,
-                                      color: Colors.blueGrey[900])
+                                  color: Colors.blueGrey[900])
                                   : Icon(CupertinoIcons.eye_slash_fill,
-                                      color: Colors.blueGrey[900]),
+                                  color: Colors.blueGrey[900]),
                               onPressed: () {
                                 obscureENumber = !obscureENumber;
                                 if (mounted) setState(() {});
@@ -334,25 +333,25 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           children: <Widget>[
                             emppinController.text.isNotEmpty
                                 ? IconButton(
-                                    onPressed: () {
-                                      if (mounted)
-                                        setState(() {
-                                          emppinController.clear();
-                                          btnEnabled = false;
-                                        });
-                                    },
-                                    icon: Icon(
-                                      CupertinoIcons.xmark_circle_fill,
-                                      color: Colors.red,
-                                    ),
-                                  )
+                              onPressed: () {
+                                if (mounted)
+                                  setState(() {
+                                    emppinController.clear();
+                                    btnEnabled = false;
+                                  });
+                              },
+                              icon: Icon(
+                                CupertinoIcons.xmark_circle_fill,
+                                color: Colors.red,
+                              ),
+                            )
                                 : SizedBox(),
                             IconButton(
                               icon: !obscureEPin
                                   ? Icon(CupertinoIcons.eye_fill,
-                                      color: Colors.blueGrey[900])
+                                  color: Colors.blueGrey[900])
                                   : Icon(CupertinoIcons.eye_slash_fill,
-                                      color: Colors.blueGrey[900]),
+                                  color: Colors.blueGrey[900]),
                               onPressed: () {
                                 obscureEPin = !obscureEPin;
                                 if (mounted) setState(() {});
@@ -365,12 +364,12 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                         if (mounted)
                           setState(() {
                             empnoController.text.isNotEmpty &&
-                                    emppinController.text.isNotEmpty
+                                emppinController.text.isNotEmpty
                                 ? btnEnabled = true
                                 : btnEnabled = false;
                           });
                       },
-                     onSubmitted: (value) => onPressLogin(),
+                      onSubmitted: (value) => onPressLogin(),
                     ),
                   ),
                   Padding(
@@ -386,7 +385,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       child: Text(
                         "Log In",
                         style: TextStyle(
-                           color: btnEnabled ? Colors.white : Colors.grey[400],
+                            color: btnEnabled ? Colors.white : Colors.grey[400],
                             fontSize: 25),
                       ),
                       color: btnEnabled ? Colors.blue : Colors.grey[300],
@@ -404,19 +403,19 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     );
   }
 
-       bool  validateCredentials(value){
-          RegExp _regExp = RegExp(r'^[0-9]+$');
-          if(_regExp.hasMatch(value)){
-            print('TRUE NI SIYA');
-            print(_regExp.hasMatch(value));
-            return true;
-          }
-          else{
-            print('FALSE NI SIYA');
-            return false;
-          }
+  bool  validateCredentials(value){
+    RegExp _regExp = RegExp(r'^[0-9]+$');
+    if(_regExp.hasMatch(value)){
+      print('TRUE NI SIYA');
+      print(_regExp.hasMatch(value));
+      return true;
+    }
+    else{
+      print('FALSE NI SIYA');
+      return false;
+    }
 
-        }
+  }
 
   onPressLogin() async {
     print('${empnoController.text.trim()}');
@@ -437,14 +436,14 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         );
       } else {
         var ls = await _sqfliteDBHelper.selectUserWhere(empnoController.text.trim(), emppinController.text.trim());
-       // var rs = await _sqfliteDBHelper.fetchUsersWhere("id != 0");
+        // var rs = await _sqfliteDBHelper.fetchUsersWhere("id != 0");
         print(ls);
         if (ls.isNotEmpty) {
           String locationId=ls[0]['location_id'];
           var filter = await _sqfliteDBHelper.selectFilterWhere(locationId);
           print('LOCATION: $locationId');
           print('FILTER: $filter');
-         // print(filter[0]['byCategory']);
+          // print(filter[0]['byCategory']);
           GlobalVariables.byCategory    = filter[0]['byCategory'] == 'True' ? true : false;
           GlobalVariables.categories    = filter[0]['categoryName'];
           GlobalVariables.byVendor      = filter[0]['byVendor'] == 'True' ? true : false;
@@ -476,32 +475,42 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
           );
         }
         else {
-          var ls2 = await _sqfliteDBHelper.selectAdminWhere(empnoController.text.trim(), emppinController.text.trim());
-          if(ls2.isNotEmpty){
-            print("ADMIN :: $ls2");
-            _log.date     = dateFormat.format(DateTime.now());
-            _log.time     = timeFormat.format(DateTime.now());
-            _log.device   = "${GlobalVariables.deviceInfo}(${GlobalVariables.readdeviceInfo})";
-            _log.user     = "${ls2[0]['emp_name']}";
-            _log.empid    = "${empnoController.text}";
-            _log.details  = "[LOGIN][Admin Login]";
-            await _sqfliteDBHelper.insertLog(_log);
-            print('Business Unit :: ${ls2[0]['business_unit']}');
-            Navigator.push(
+          instantMsgModal(
               context,
-              MaterialPageRoute(builder: (context) => AdminDashboardScreen(user: "${ls2[0]['emp_name']}", id: "${empnoController.text}", businessUnit: '${ls2[0]['business_unit']}')),
-            );
-          }else{
-            instantMsgModal(
-                context,
-                Icon(
-                  CupertinoIcons.exclamationmark_circle,
-                  color: Colors.red,
-                  size: 40,
-                ),
-                Text("Invalid Credentials."));
-          }
+              Icon(
+                CupertinoIcons.exclamationmark_circle,
+                color: Colors.red,
+                size: 40,
+              ),
+              Text("Invalid Credentials."));
         }
+        // {
+        //   var ls2 = await _sqfliteDBHelper.selectAdminWhere(empnoController.text.trim(), emppinController.text.trim());
+        //   if(ls2.isNotEmpty){
+        //     print("ADMIN :: $ls2");
+        //     _log.date     = dateFormat.format(DateTime.now());
+        //     _log.time     = timeFormat.format(DateTime.now());
+        //     _log.device   = "${GlobalVariables.deviceInfo}(${GlobalVariables.readdeviceInfo})";
+        //     _log.user     = "${ls2[0]['emp_name']}";
+        //     _log.empid    = "${empnoController.text}";
+        //     _log.details  = "[LOGIN][Admin Login]";
+        //     await _sqfliteDBHelper.insertLog(_log);
+        //     print('Business Unit :: ${ls2[0]['business_unit']}');
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(builder: (context) => AdminDashboardScreen(user: "${ls2[0]['emp_name']}", id: "${empnoController.text}", businessUnit: '${ls2[0]['business_unit']}')),
+        //     );
+        //   }else{
+        //     instantMsgModal(
+        //         context,
+        //         Icon(
+        //           CupertinoIcons.exclamationmark_circle,
+        //           color: Colors.red,
+        //           size: 40,
+        //         ),
+        //         Text("Invalid Credentials."));
+        //   }
+        // }
       }
     }
   }

@@ -75,106 +75,105 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
                 children: [
                   Divider(),
                   menuList(CupertinoIcons.barcode_viewfinder, "Item Scanning",
-                      () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => UserAreaScreen()),
-                    );
-                  }),
+                          () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => UserAreaScreen()),
+                        );
+                      }),
                   Divider(),
-                  GlobalVariables.byCategory == true && GlobalVariables.byVendor ==
-                              true //------BY CATEGORY == TRUE AND BY VENDOR = TRUE------//
+                  GlobalVariables.byCategory == true && GlobalVariables.byVendor == true //------BY CATEGORY == TRUE AND BY VENDOR = TRUE------//
                       ? Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                    text: "Item to scan:\n",
-                                    style: TextStyle(
-                                        fontSize: 25,
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.bold)),
-                                TextSpan(
-                                    text: "1. Item belongs to category ${GlobalVariables.categories}\n",
-                                    style: TextStyle(fontSize: 25, color: Colors.black)),
-                                TextSpan(
-                                    text: "2. Item belongs to vendor ${GlobalVariables.vendors}",
-                                    style: TextStyle(fontSize: 25, color: Colors.black))
-                              ],
-                            ),
-                          ),
-                        )
+                    padding: const EdgeInsets.all(8.0),
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                              text: "Item to scan:\n",
+                              style: TextStyle(
+                                  fontSize: 25,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold)),
+                          TextSpan(
+                              text: "1. Item belongs to category ${GlobalVariables.categories}\n",
+                              style: TextStyle(fontSize: 25, color: Colors.black)),
+                          TextSpan(
+                              text: "2. Item belongs to vendor ${GlobalVariables.vendors}",
+                              style: TextStyle(fontSize: 25, color: Colors.black))
+                        ],
+                      ),
+                    ),
+                  )
                       : GlobalVariables.byCategory == false && GlobalVariables.byVendor == false //------BY CATEGORY == FALSE AND BY VENDOR = FALSE------//
-                          ? Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                        text: "Item to scan:\n",
-                                        style: TextStyle(
-                                            fontSize: 25,
-                                            color: Colors.blue,
-                                            fontWeight: FontWeight.bold)),
-                                    TextSpan(
-                                        text: "1. ALL CATEGORY\n",
-                                        style: TextStyle(
-                                            fontSize: 25, color: Colors.black)),
-                                    TextSpan(
-                                        text: "2. ALL VENDOR",
-                                        style: TextStyle(
-                                            fontSize: 25, color: Colors.black))
-                                  ],
-                                ),
-                              ),
-                            )
-                          : GlobalVariables.byCategory == true && GlobalVariables.byVendor == false //------BY CATEGORY == TRUE AND BY VENDOR = FALSE------//
-                              ? Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                            text: "Item to scan:\n",
-                                            style: TextStyle(
-                                                fontSize: 25,
-                                                color: Colors.blue,
-                                                fontWeight: FontWeight.bold)),
-                                        TextSpan(
-                                            text:
-                                                "1. Item belongs to category ${GlobalVariables.categories}\n",
-                                            style: TextStyle(
-                                                fontSize: 25,
-                                                color: Colors.black)),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              : GlobalVariables.byCategory == false && GlobalVariables.byVendor == true //------BY CATEGORY == FALSE AND BY VENDOR = TRUE------//
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: RichText(
-                                        text: TextSpan(
-                                          children: [
-                                            TextSpan(
-                                                text: "Item to scan:\n",
-                                                style: TextStyle(
-                                                    fontSize: 25,
-                                                    color: Colors.blue,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                            TextSpan(
-                                                text:
-                                                    "1. Item belongs to vendor ${GlobalVariables.vendors}",
-                                                style: TextStyle(
-                                                    fontSize: 25,
-                                                    color: Colors.black))
-                                          ],
-                                        ),
-                                      ),
-                                  )
-                                  : SizedBox(),
+                      ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                              text: "Item to scan:\n",
+                              style: TextStyle(
+                                  fontSize: 25,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold)),
+                          TextSpan(
+                              text: "1. ALL CATEGORY\n",
+                              style: TextStyle(
+                                  fontSize: 25, color: Colors.black)),
+                          TextSpan(
+                              text: "2. ALL VENDOR",
+                              style: TextStyle(
+                                  fontSize: 25, color: Colors.black))
+                        ],
+                      ),
+                    ),
+                  )
+                      : GlobalVariables.byCategory == true && GlobalVariables.byVendor == false //------BY CATEGORY == TRUE AND BY VENDOR = FALSE------//
+                      ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                              text: "Item to scan:\n",
+                              style: TextStyle(
+                                  fontSize: 25,
+                                  color: Colors.blue,
+                                  fontWeight: FontWeight.bold)),
+                          TextSpan(
+                              text:
+                              "1. Item belongs to category ${GlobalVariables.categories}\n",
+                              style: TextStyle(
+                                  fontSize: 25,
+                                  color: Colors.black)),
+                        ],
+                      ),
+                    ),
+                  )
+                      : GlobalVariables.byCategory == false && GlobalVariables.byVendor == true //------BY CATEGORY == FALSE AND BY VENDOR = TRUE------//
+                      ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                              text: "Item to scan:\n",
+                              style: TextStyle(
+                                  fontSize: 25,
+                                  color: Colors.blue,
+                                  fontWeight:
+                                  FontWeight.bold)),
+                          TextSpan(
+                              text:
+                              "1. Item belongs to vendor ${GlobalVariables.vendors}",
+                              style: TextStyle(
+                                  fontSize: 25,
+                                  color: Colors.black))
+                        ],
+                      ),
+                    ),
+                  )
+                      : SizedBox(),
                 ],
               ),
             ),
@@ -223,19 +222,19 @@ class _UserDashboardScreenState extends State<UserDashboardScreen> {
   }
   logOut() {
     customLogicalModal(context, Text("Are you sure you want to logout?"),
-        () => Navigator.pop(context), () async {
-      _log.date = dateFormat.format(DateTime.now());
-      _log.time = timeFormat.format(DateTime.now());
-      _log.device = "${GlobalVariables.deviceInfo}(${GlobalVariables.readdeviceInfo})";
-      _log.user = GlobalVariables.logFullName;
-      _log.empid = GlobalVariables.logEmpNo;
-      _log.details = "[LOGOUT][Inventory Clerk]";
-      await _sqfliteDBHelper.insertLog(_log);
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (BuildContext context) => PhysicalCount(),
-          ),
-          (Route route) => false);
-    });
+            () => Navigator.pop(context), () async {
+          _log.date = dateFormat.format(DateTime.now());
+          _log.time = timeFormat.format(DateTime.now());
+          _log.device = "${GlobalVariables.deviceInfo}(${GlobalVariables.readdeviceInfo})";
+          _log.user = GlobalVariables.logFullName;
+          _log.empid = GlobalVariables.logEmpNo;
+          _log.details = "[LOGOUT][Inventory Clerk]";
+          await _sqfliteDBHelper.insertLog(_log);
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (BuildContext context) => PhysicalCount(),
+              ),
+                  (Route route) => false);
+        });
   }
 }

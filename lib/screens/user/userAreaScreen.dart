@@ -157,15 +157,25 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                   itemBuilder: (context, index) {
                     var data = _assignArea;
                     var countData = countType;
-                    var scheduledDate = DateTime.parse(countData[index]['batchDate']);
+                    if (index >= 0 && index < countData.length) {
+                      var scheduledDate = DateTime.parse(countData[index]['batchDate']);
+                      // Rest of your code using scheduledDate
 
-                    print("Scheduled Date: $scheduledDate");
-                    print("Is Within One Week: ${isWithinOneWeek(scheduledDate)}");
+                      if (!isWithinOneWeek(scheduledDate)) {
+                        // Skip adding this item to the list
+                        return SizedBox.shrink();
+                      }
 
-                    if (!isWithinOneWeek(scheduledDate)) {
-                      // Skip adding this item to the list
-                      return SizedBox.shrink();
+                      print("Scheduled Date: $scheduledDate");
+                      print("Is Within One Week: ${isWithinOneWeek(scheduledDate)}");
+                    } else {
+                      // Handle the case when index is out of bounds, e.g., print an error message or provide a default value.
+                      print('Invalid index: $index');
                     }
+
+                    print("mao ni index");
+                    print(index);
+
 
                     return Padding(
                       padding:
@@ -194,6 +204,7 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                     ? Colors.green
                                     : Colors.orange,
                               ),
+                              SizedBox(width: 2.0),
                               Expanded(
                                 child: Text(
                                   data[index]['rack_desc'],
@@ -385,13 +396,6 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                 const EdgeInsets.only(right: 8.0),
                                 child: ElevatedButton(
                                   onPressed: () async {
-                                    // SharedPreferences prefss =
-                                    //     await SharedPreferences
-                                    //         .getInstance();
-                                    // GlobalVariables.saveAuditSignature =
-                                    //     prefss.getString(
-                                    //             'saveAuditSignature') ??
-                                    //         '';
                                     if(!btnSyncClick){
                                       setState(() {
                                         btnSyncClick = true;
@@ -409,12 +413,12 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                                 content: Text("Continue to Sync in this Server?"),
                                                 actions: <Widget>[
                                                   TextButton(
-                                                    child: Text("Yes"),
-                                                    onPressed: ()async{
-                                                      //Navigator.of(context).pop();
-                                                      await scanRovingITModal(context, _sqfliteDBHelper);
-                                                      if(GlobalVariables.isRovingITAccess){
-                                                        GlobalVariables.isRovingITAccess = false;
+                                                      child: Text("Yes"),
+                                                      onPressed: ()async{
+                                                        //Navigator.of(context).pop();
+                                                        // await scanRovingITModal(context, _sqfliteDBHelper);
+                                                        // if(GlobalVariables.isRovingITAccess){
+                                                        //   GlobalVariables.isRovingITAccess = false;
                                                         print("Still here!");
                                                         GlobalVariables.currentLocationID   = data[index]['location_id'];
                                                         GlobalVariables.currentBusinessUnit = data[index]['business_unit'];
@@ -433,7 +437,7 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                                                   SyncScannedItemScreen()),
                                                         );
                                                       }
-                                                    },
+                                                    // },
                                                   ),
                                                   TextButton(
                                                     child: Text("No"),
@@ -528,21 +532,19 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
 
   _refreshUserAssignAreaList() async {
     _assignArea = [];
-    _assignArea = await _sqfliteDBHelper.selectUserArea(GlobalVariables.logEmpNo, sul.server(ServerUrl.urlCI));
-    print('mao ni assign area');
-    print(_assignArea);
+    // _assignArea = await _sqfliteDBHelper.selectUserArea(GlobalVariables.logEmpNo, sul.server(ServerUrl.urlCI));
 
-    // countType = [];
-    // ctype = [];
-    countType = await _sqfliteDBHelper.getCountTypeDate(GlobalVariables.logEmpNo);
+    // countType = await _sqfliteDBHelper.getCountTypeDate(GlobalVariables.logEmpNo);
 
-    if (_assignArea.length > 0 && countType.length>0) {
+    if (_assignArea.length > 0 && countType.length > 0) {
       //checking = false;
       if (mounted) setState(() {});
     } else {
       var user = int.parse(GlobalVariables.logEmpNo) * 1;
       _assignArea = await _sqfliteDBHelper.selectUserArea(user.toString(), sul.server(ServerUrl.urlCI));
-      countType = await _sqfliteDBHelper.getCountTypeDate(user.toString());
+      countType = await _sqfliteDBHelper.getCountTypeDate(user.toString(),sul.server(ServerUrl.urlCI));
+      print('mao ni assign area');
+      print(_assignArea);
       print(countType);
       print("-------");
       //checking = false;

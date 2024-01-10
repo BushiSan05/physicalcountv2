@@ -15,6 +15,8 @@ import 'package:physicalcountv2/widget/instantMsgModal.dart';
 import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 import 'dart:ui' as ui;
 
+import '../../widget/scanRovingITModal.dart';
+
 class SyncScannedItemScreen extends StatefulWidget {
   const SyncScannedItemScreen({Key? key}) : super(key: key);
 
@@ -66,41 +68,41 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
           titleSpacing: 0.0,
           elevation: 0.0,
           leading: IconButton(
-            icon: Icon(Icons.close, color: Colors.red),
-            onPressed: () {
-              if(!btn_sync){
-                btn_close_click = true;
-                showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (BuildContext context){
-                      return CupertinoAlertDialog(
-                        title: Text("Syncing ongoing"),
-                        content: Text("Continue to Close?"),
-                        actions: <Widget>[
-                          TextButton(
-                            child: Text("Yes"),
-                            onPressed: (){
-                              btn_close_click = false;
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          TextButton(
-                            child: Text("No"),
-                            onPressed: (){
-                              Navigator.of(context).pop();
-                              btn_close_click = false;
-                            },
-                          ),
-                        ],
-                      );
-                    }
-                );
-              }else{
-                Navigator.of(context).pop();
+              icon: Icon(Icons.close, color: Colors.red),
+              onPressed: () {
+                if(!btn_sync){
+                  btn_close_click = true;
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (BuildContext context){
+                        return CupertinoAlertDialog(
+                          title: Text("Syncing ongoing"),
+                          content: Text("Continue to Close?"),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text("Yes"),
+                              onPressed: (){
+                                btn_close_click = false;
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: Text("No"),
+                              onPressed: (){
+                                Navigator.of(context).pop();
+                                btn_close_click = false;
+                              },
+                            ),
+                          ],
+                        );
+                      }
+                  );
+                }else{
+                  Navigator.of(context).pop();
+                }
               }
-            }
           ),
           title: Row(
             children: [
@@ -166,34 +168,61 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
                       color: Colors.white,
                     ),
                     Text(
-                      "Start to sync",
+                      " Start to sync",
                       style: TextStyle(color: Colors.white, fontSize: 25),
                     ),
                   ],
                 ),
               ),
               onPressed: () async {
-                if(btn_sync){
-                  btn_sync = false;
-                  //var res = "connected";
-                  var res = await checkConnection();
-                  print('RES: $res');
-                  if (res == 'connected') {
-                    final dataUser = await signatureUserGlobalKey.currentState!
-                        .toImage(pixelRatio: 2.0); //3.0
-                    final bytesUser =
-                    await dataUser.toByteData(format: ui.ImageByteFormat.png);
-                    final dataAudit = await signatureAuditGlobalKey.currentState!
-                        .toImage(pixelRatio: 2.0); //3.0
-                    final bytesAudit =
-                    await dataAudit.toByteData(format: ui.ImageByteFormat.png);
-                    // print(signatureAuditGlobalKey.currentState!.toPathList());
-                    // if (bytesUser!.buffer.lengthInBytes == 6864 ||
-                    //     bytesAudit!.buffer.lengthInBytes == 6864) {
-                    if (signatureUserGlobalKey.currentState!.toPathList().length ==
-                        0 ||
-                        signatureAuditGlobalKey.currentState!.toPathList().length ==
-                            0) {
+                await scanRovingITModal(context, _sqfliteDBHelper);
+                if (GlobalVariables.isRovingITAccess) {
+                  GlobalVariables.isRovingITAccess = false;
+                  if(btn_sync) {
+                    btn_sync = false;
+                    //var res = "connected";
+
+                    var res = await checkConnection();
+                    print('RES: $res');
+                    if (res == 'connected') {
+                      final dataUser = await signatureUserGlobalKey.currentState!.toImage(pixelRatio: 2.0); //3.0
+
+                      final bytesUser = await dataUser.toByteData(format: ui.ImageByteFormat.png);
+
+                      final dataAudit = await signatureAuditGlobalKey.currentState!.toImage(pixelRatio: 2.0); //3.0
+
+                      final bytesAudit = await dataAudit.toByteData(format: ui.ImageByteFormat.png);
+
+                      // print(signatureAuditGlobalKey.currentState!.toPathList());
+                      // if (bytesUser!.buffer.lengthInBytes == 6864 ||
+                      //     bytesAudit!.buffer.lengthInBytes == 6864) {
+
+                      if (signatureUserGlobalKey.currentState!.toPathList().length == 0 ||
+                          signatureAuditGlobalKey.currentState!.toPathList().length == 0) {
+                        instantMsgModal(
+                            context,
+                            Icon(
+                              CupertinoIcons.exclamationmark_circle,
+                              color: Colors.red,
+                              size: 40,
+                            ),
+                            Text(
+                                "User signature and Auditor signature are required to be signed before syncing."));
+                        btn_sync = true;
+                      } else {
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => SyncScreen(passbytesUser: bytesUser!.buffer.asUint8List().toString(),passbytesAudit: bytesAudit!.buffer.asUint8List().toString())),
+                        // ).then((result){
+                        // });
+                        userSignature = base64Encode(bytesUser!.buffer.asUint8List());
+                        auditSignature = base64Encode(bytesAudit!.buffer.asUint8List());
+                        continueSync(base64Encode(bytesUser!.buffer.asUint8List()), base64Encode(bytesAudit!.buffer.asUint8List()));
+                      }
+                    } else {
+                      setState(() {
+                        btn_sync = true;
+                      });
                       instantMsgModal(
                           context,
                           Icon(
@@ -201,29 +230,8 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
                             color: Colors.red,
                             size: 40,
                           ),
-                          Text("User signature and Auditor signature are required to signed before syncing."));
-                      btn_sync = true;
-                    } else {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => SyncScreen(passbytesUser: bytesUser!.buffer.asUint8List().toString(),passbytesAudit: bytesAudit!.buffer.asUint8List().toString())),
-                      // ).then((result){
-                      // });
-                      userSignature = base64Encode(bytesUser!.buffer.asUint8List());
-                      auditSignature = base64Encode(bytesAudit!.buffer.asUint8List());
-                      continueSync(base64Encode(bytesUser!.buffer.asUint8List()),
-                          base64Encode(bytesAudit!.buffer.asUint8List()));
+                          Text("No Connection. Please connect to a network."));
                     }
-                  }else{
-                    instantMsgModal(
-                        context,
-                        Icon(
-                          CupertinoIcons.exclamationmark_circle,
-                          color: Colors.red,
-                          size: 40,
-                        ),
-                        Text("No Connection. Please connect to a network."));
-                    btn_sync = true;
                   }
                 }
               },
@@ -260,12 +268,12 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
                     height: 150,
                     width: 300,
                     decoration:
-                        BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            image: DecorationImage(
-                            image: AssetImage("assets/images/signaturepad/guideLine.png"),
-                            fit: BoxFit.cover,
-                          ),))),
+                    BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      image: DecorationImage(
+                        image: AssetImage("assets/images/signaturepad/guideLine.png"),
+                        fit: BoxFit.cover,
+                      ),))),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -316,14 +324,14 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
                         strokeColor: Colors.black,
                         minimumStrokeWidth: 1.0,
                         maximumStrokeWidth: 4.0),
-                        height: 150,
-                        width: 300,
-                        decoration:
-                            BoxDecoration(border: Border.all(color: Colors.grey),
-                                image: DecorationImage(
-                                image: AssetImage("assets/images/signaturepad/guideLine.png"),
-                                fit: BoxFit.cover,
-                            ),))),
+                    height: 150,
+                    width: 300,
+                    decoration:
+                    BoxDecoration(border: Border.all(color: Colors.grey),
+                      image: DecorationImage(
+                        image: AssetImage("assets/images/signaturepad/guideLine.png"),
+                        fit: BoxFit.cover,
+                      ),))),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -363,7 +371,7 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
           res = await syncItem_adv(items, userSignature, auditSignature).timeout(timeLimit);
           break;
       //----| 3 |------
-        /*case "audit-trail":
+      /*case "audit-trail":
           res = await syncAuditTrail(items).timeout(timeLimit);
           break;*/
       //----| 4 |------
@@ -377,7 +385,7 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
           print("ERROR :: $res");
           break;
       //----| 6 |------
-        /*case "audit-trail":
+      /*case "audit-trail":
           res = await syncAuditTrail(items).timeout(timeLimit);
           break;*/
       //----| 7 |------
@@ -800,7 +808,7 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
   _getCountedItems() async {
     _items = await _sqfliteDBHelper.selectItemCountRawQuery(
         "SELECT itemcode, barcode, desc, description, uom, lot_number, expiry, qty, business_unit, department, section, rack_desc, datetimecreated, datetimesaved, location_id, conqty FROM ${ItemCount.tblItemCount} WHERE empno = '${GlobalVariables.logEmpNo}' AND business_unit = '${GlobalVariables.currentBusinessUnit}' AND department = '${GlobalVariables.currentDepartment}' AND section  = '${GlobalVariables.currentSection}' AND rack_desc  = '${GlobalVariables.currentRackDesc}' AND location_id = '${GlobalVariables.currentLocationID}' AND exported != 'EXPORTED'");
-      print("ITEMS :: $_items");
+    print("ITEMS :: $_items");
   }
   _getCountedNfItems() async {
     _nfitems = await _sqfliteDBHelper.selectItemNotFoundRawQuery(
