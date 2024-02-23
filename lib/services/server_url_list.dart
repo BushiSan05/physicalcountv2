@@ -1,6 +1,7 @@
 class ServerUrlList{
   //--------------------------> Note: Local IP should the same with the default IP @ server_url.dart<----------------------
   static var _serverUrlList = {'LOCAL'            : 'http://172.16.163.2:81/pcount_app/pcount_local_james/',
+                               //'LARAVEL'          : 'https://172.16.43.151:8090/',
                                'DISTRIBUTION'     : 'http://172.16.163.2:81/pcount_app/pcount_pdc/',
                                'ASC: MAIN'        : 'http://172.16.163.2:81/pcount_app/pcount_alturas/',
                                'PLAZA MARCELA'    : 'http://172.16.163.2:81/pcount_app/pcount_pm/',

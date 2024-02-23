@@ -159,7 +159,6 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                     var countData = countType;
                     if (index >= 0 && index < countData.length) {
                       var scheduledDate = DateTime.parse(countData[index]['batchDate']);
-                      // Rest of your code using scheduledDate
 
                       if (!isWithinOneWeek(scheduledDate)) {
                         // Skip adding this item to the list
@@ -172,9 +171,12 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                       // Handle the case when index is out of bounds, e.g., print an error message or provide a default value.
                       print('Invalid index: $index');
                     }
+                    for (int i = 0; i < countData.length; i++) {
+                      print("Index: $i, Data: ${countData[i]}");
+                    }
 
-                    print("mao ni index");
-                    print(index);
+                    print("mao ni index: $index");
+
 
 
                     return Padding(
@@ -532,7 +534,9 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
 
   _refreshUserAssignAreaList() async {
     _assignArea = [];
-    // _assignArea = await _sqfliteDBHelper.selectUserArea(GlobalVariables.logEmpNo, sul.server(ServerUrl.urlCI));
+    countType = [];
+    _assignArea = await _sqfliteDBHelper.selectUserArea(GlobalVariables.logEmpNo, sul.server(ServerUrl.urlCI));
+    countType = await _sqfliteDBHelper.getCountTypeDate(GlobalVariables.logEmpNo, sul.server(ServerUrl.urlCI));
 
     // countType = await _sqfliteDBHelper.getCountTypeDate(GlobalVariables.logEmpNo);
 
@@ -543,9 +547,8 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
       var user = int.parse(GlobalVariables.logEmpNo) * 1;
       _assignArea = await _sqfliteDBHelper.selectUserArea(user.toString(), sul.server(ServerUrl.urlCI));
       countType = await _sqfliteDBHelper.getCountTypeDate(user.toString(),sul.server(ServerUrl.urlCI));
-      print('mao ni assign area');
-      print(_assignArea);
-      print(countType);
+      print("mao ni assign area: $_assignArea");
+      print("kani ang counttype: $countType");
       print("-------");
       //checking = false;
       if (mounted) setState(() {});

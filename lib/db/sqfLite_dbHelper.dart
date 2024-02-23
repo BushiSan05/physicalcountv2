@@ -635,18 +635,8 @@ class SqfliteDBHelper {
   }
 
   Future getCountTypeDate(String emp_no, String business_unit)async{
+    print("Emp_no: $emp_no, Business Unit: $business_unit");
     var db = await database;
-
-    // Calculate the date range for a week before and after the current date
-    DateTime currentDate = DateTime.now();
-    DateTime weekBefore = currentDate.subtract(Duration(days: 7));
-    DateTime weekAfter = currentDate.add(Duration(days: 7));
-
-    // Format the dates to the SQLite date format (YYYY-MM-DD)
-    String formattedWeekBefore = weekBefore.toIso8601String().split('T')[0];
-    String formattedWeekAfter = weekAfter.toIso8601String().split('T')[0];
-
-
     return db.rawQuery("SELECT user.emp_no, user.location_id, fil.batchDate, fil.countType, fil.ctype "
         "FROM users AS user "
         "INNER JOIN filter AS fil ON user.location_id = fil.location_id "
