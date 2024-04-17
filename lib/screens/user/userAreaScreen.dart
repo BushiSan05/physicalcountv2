@@ -479,7 +479,7 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                       btnSyncClick && indexClick == index
                                           ? AnimatedBuilder(
                                         animation: animationController,
-                                        child: Icon(
+                                            child: Icon(
                                             CupertinoIcons
                                                 .arrow_2_circlepath,
                                             color: Colors.white),

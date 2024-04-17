@@ -186,6 +186,7 @@ class SqfliteDBHelper {
       CREATE TABLE ${ItemNotFound.tblItemNotFound}(
         ${ItemNotFound.colId} INTEGER PRIMARY KEY AUTOINCREMENT,
         ${ItemNotFound.colBarcode} TEXT NOT NULL,
+        ${ItemNotFound.colDesc} TEXT,
         ${ItemNotFound.colUom} TEXT NOT NULL,
         ${ItemNotFound.colLotno} TEXT,
         ${ItemNotFound.colExpiry} TEXT,

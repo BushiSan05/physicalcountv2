@@ -832,6 +832,7 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
       }
     }
 //------BY CATEGORY == TRUE AND BY VENDOR = TRUE------//
+
 //------BY CATEGORY == FALSE AND BY VENDOR = FALSE------//
     if (GlobalVariables.byCategory == false &&
         GlobalVariables.byVendor == false) {
@@ -872,6 +873,7 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
       }
     }
 //------BY CATEGORY == FALSE AND BY VENDOR = FALSE------//
+
 //------BY CATEGORY == TRUE AND BY VENDOR = FALSE------//
     if (GlobalVariables.byCategory == true &&
         GlobalVariables.byVendor == false) {

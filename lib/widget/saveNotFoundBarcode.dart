@@ -14,16 +14,19 @@ import 'instantMsgModal.dart';
 
 saveNotFoundBarcode(BuildContext context, SqfliteDBHelper db, List units) {
   late FocusNode myFocusNodeBarcode;
+  late FocusNode myFocusNodeDesc;
   late FocusNode myFocusNodeLotno;
   // late FocusNode myFocusNodeBatno;
   late FocusNode myFocusNodeQty;
 
   myFocusNodeBarcode = FocusNode();
+  myFocusNodeDesc = FocusNode();
   myFocusNodeLotno = FocusNode();
   // myFocusNodeBatno = FocusNode();
   myFocusNodeQty = FocusNode();
 
   final barcodeController = TextEditingController();
+  final descController = TextEditingController();
   final lotnoController = TextEditingController();
   // final batnoController = TextEditingController();
   final qtyController = TextEditingController();
@@ -179,6 +182,38 @@ saveNotFoundBarcode(BuildContext context, SqfliteDBHelper db, List units) {
                           setModalState(() {});
                         }
                       },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                    child: Text("Description",
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold)),
+
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 20.0, right: 20.0, bottom: 10.0),
+                    child: Container(
+                      child: TextFormField(
+                        autofocus: true,
+                        focusNode: myFocusNodeDesc,
+                        style: TextStyle(fontSize: 20),
+                        controller: descController,
+                        decoration: InputDecoration(
+                          contentPadding:
+                          EdgeInsets.all(8.0), //here your padding
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(3)),
+                        ),
+                        onFieldSubmitted: (value) {
+                          if (barcodeController.text.isNotEmpty)
+                            myFocusNodeLotno.requestFocus();
+                          btnSaveEnabled=false;
+                        },
+                      ),
                     ),
                   ),
                   Padding(
@@ -434,6 +469,7 @@ saveNotFoundBarcode(BuildContext context, SqfliteDBHelper db, List units) {
                             DateFormat dateFormat1 = DateFormat("yyyy-MM-dd hh:mm:ss aaa");
                             String dt = dateFormat1.format(DateTime.now());
                             _itemNotFound.barcode = barcodeController.text.trim();
+                            _itemNotFound.inputted_desc = descController.text.trim();
                             _itemNotFound.itemcode='00000';
                             _itemNotFound.uom = _selectedUom.trim();
                             _itemNotFound.lotno = lotnoController.text.isNotEmpty
@@ -456,6 +492,7 @@ saveNotFoundBarcode(BuildContext context, SqfliteDBHelper db, List units) {
                             _itemNotFound.description='barcode';
                             await db.insertItemNotFound(_itemNotFound);
                             myFocusNodeBarcode.requestFocus();
+                            descController.clear();
                             barcodeController.clear();
                             lotnoController.clear();
                             // batnoController.clear();

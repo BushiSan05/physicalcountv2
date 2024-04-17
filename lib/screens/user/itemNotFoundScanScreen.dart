@@ -170,7 +170,7 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
                 ? loading()
                 : itemNotFound.length > 0
                 ? Expanded(
-              child: Scrollbar(
+                   child: Scrollbar(
 //=========================================S E A R C H  N O T  F O U N D  I T E M S================================================//
                 child: _listStat == true
                     ? ListView.builder(
@@ -215,6 +215,24 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
                                           FontWeight.bold)),
                                   TextSpan(
                                       text: "${_notSyncNF[index]['barcode']}",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: "Inputted Description: ",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight:
+                                          FontWeight.bold)),
+                                  TextSpan(
+                                      text: "${_notSyncNF[index]['inputted_description']}",
                                       style: TextStyle(
                                           fontSize: 15,
                                           color: Colors.black))
@@ -347,6 +365,7 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
                                               "[Update][Audit scan ID to update scanned item quantity.]",
                                               _notSyncNF[index]['id'].toString(),
                                               _notSyncNF[index]['barcode'].toString(),
+                                              _notSyncNF[index]['inputted_desc'].toString(),
                                               _notSyncNF[index]['uom'].toString(),
                                               _notSyncNF[index]['lot_number'].toString(),
                                               // _notSyncNF[index]['batch_number'].toString(),
@@ -502,6 +521,24 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
+                                      text: "Inputted Description: ",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.blue,
+                                          fontWeight:
+                                          FontWeight.bold)),
+                                  TextSpan(
+                                      text: "${itemNotFound[index].inputted_desc}",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.black))
+                                ],
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
                                       text: "Unit of Measure: ",
                                       style: TextStyle(
                                           fontSize: 15,
@@ -632,6 +669,7 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
                                               "[Update][Audit scan ID to update scanned item quantity.]",
                                               itemNotFound[index].id!.toString(),
                                               itemNotFound[index].barcode!,
+                                              itemNotFound[index].inputted_desc ?? '',
                                               itemNotFound[index].uom!,
                                               itemNotFound[index].lotno ?? '',
                                               // itemNotFound[index].batno!,

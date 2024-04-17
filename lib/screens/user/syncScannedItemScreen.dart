@@ -812,7 +812,7 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
   }
   _getCountedNfItems() async {
     _nfitems = await _sqfliteDBHelper.selectItemNotFoundRawQuery(
-        "SELECT barcode, itemcode, uom, lot_number, expiry, qty,location, datetimecreated,business_unit,department,section,empno,rack_desc,description FROM ${ItemNotFound.tblItemNotFound} WHERE empno = '${GlobalVariables.logEmpNo}' AND business_unit = '${GlobalVariables.currentBusinessUnit}' AND department = '${GlobalVariables.currentDepartment}' AND section  = '${GlobalVariables.currentSection}' AND rack_desc  = '${GlobalVariables.currentRackDesc}' AND location = '${GlobalVariables.currentLocationID}' AND exported != 'EXPORTED'");
+        "SELECT barcode, inputted_description, itemcode, uom, lot_number, expiry, qty,location, datetimecreated,business_unit,department,section,empno,rack_desc,description FROM ${ItemNotFound.tblItemNotFound} WHERE empno = '${GlobalVariables.logEmpNo}' AND business_unit = '${GlobalVariables.currentBusinessUnit}' AND department = '${GlobalVariables.currentDepartment}' AND section  = '${GlobalVariables.currentSection}' AND rack_desc  = '${GlobalVariables.currentRackDesc}' AND location = '${GlobalVariables.currentLocationID}' AND exported != 'EXPORTED'");
   }
 
   _getCountType()async{

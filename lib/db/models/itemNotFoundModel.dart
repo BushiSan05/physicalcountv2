@@ -2,6 +2,7 @@ class ItemNotFound {
   static const tblItemNotFound = 'itemnotfound';
   static const colId = 'id';
   static const colBarcode = 'barcode';
+  static const colDesc = 'inputted_description';
   static const colUom = 'uom';
   static const colLotno = 'lot_number';
   // static const colBatno = 'batch_number';
@@ -20,6 +21,7 @@ class ItemNotFound {
 
   late final int? id;
   late String? barcode;
+  late String? inputted_desc;
   late String? uom;
   late String? lotno;
   // late String? batno;
@@ -39,6 +41,7 @@ class ItemNotFound {
   ItemNotFound({
     this.id,
     this.barcode,
+    this.inputted_desc,
     this.uom,
     this.lotno,
     // this.batno,
@@ -59,6 +62,7 @@ class ItemNotFound {
   ItemNotFound.fromMap(Map<String, dynamic> map) {
     id              = map[colId];
     barcode         = map[colBarcode];
+    inputted_desc   = map[colDesc];
     uom             = map[colUom];
     lotno           = map[colLotno];
     // batno           = map[colBatno];
@@ -78,6 +82,7 @@ class ItemNotFound {
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
       colBarcode    : barcode,
+      colDesc       : inputted_desc,
       colUom        : uom,
       colLotno      : lotno,
       // colBatno      : batno,

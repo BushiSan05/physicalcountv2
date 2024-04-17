@@ -17,29 +17,34 @@ updateNotFoundItemModal(
     String details,
     String id,
     String barcode,
+    String inputted_desc,
     String uom,
     String lotno,
     // String batno,
     String expiry,
     String qty,
     List units) {
+  late FocusNode myFocusNodeDesc;
   late FocusNode myFocusNodeLotno;
   // late FocusNode myFocusNodeBatno;
   late FocusNode myFocusNodeQty;
   myFocusNodeLotno = FocusNode();
+  myFocusNodeDesc = FocusNode();
   // myFocusNodeBatno = FocusNode();
   myFocusNodeQty = FocusNode();
 
   final lotnoController = TextEditingController();
+  final descController = TextEditingController();
   // final batnoController = TextEditingController();
   final qtyController = TextEditingController();
   DateTime? selectedDate;
 
-  myFocusNodeLotno.requestFocus();
+  myFocusNodeDesc.requestFocus();
   // ItemNotFound _itemNotFound = ItemNotFound();
 
   var _uom = units;
   String _selectedUom = uom;
+  descController.text = inputted_desc;
   lotnoController.text = lotno;
   qtyController.text = qty;
   final validCharacters = RegExp(r'^[0-9]+$');
@@ -114,6 +119,34 @@ updateNotFoundItemModal(
                               style:
                                   TextStyle(fontSize: 23, color: Colors.black))
                         ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0, right: 20.0),
+                    child: Text("Inputted Description",
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 20.0, right: 20.0, bottom: 10.0),
+                    child: Container(
+                      child: TextFormField(
+                        focusNode: myFocusNodeDesc,
+                        controller: descController,
+                        style: TextStyle(fontSize: 25),
+                        decoration: InputDecoration(
+                          contentPadding:
+                          EdgeInsets.all(8.0), //here your padding
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(3)),
+                        ),
+                        onFieldSubmitted: (value) {
+                          myFocusNodeLotno.requestFocus();
+                        },
                       ),
                     ),
                   ),
