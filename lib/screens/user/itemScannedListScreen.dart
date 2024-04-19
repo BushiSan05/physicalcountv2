@@ -250,27 +250,45 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                             ),
                             Row(
                               children: [
+                                Text(
+                                  'Description: ',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue, // Set the color here
+                                  ),
+                                ),
                                 Flexible(
-                                  child: Text(_items2[index]['description'],
+                                  child: Text(
+                                    _items2[index]['description'],
                                     style: TextStyle(fontSize: 25),
-                                    // maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
-                            _items2[index]['description'] != _items2[index]['desc'] && _items2[index]['desc'] != "" ?
-                            Row(
-                              children: [
-                                Flexible(
-                                  child: Text(_items2[index]['desc'],
-                                    style: TextStyle(fontSize: 20),
-                                    // maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+// Check if _items2[index]['desc'] should be displayed
+                            if (_items2[index]['description'] != _items2[index]['desc'] &&
+                                _items2[index]['desc'] != "")
+                              Row(
+                                children: [
+                                  Text(
+                                    'Extended Description: ',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue, // Set the color here
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ):
+                                  Flexible(
+                                    child: Text(
+                                      _items2[index]['desc'],
+                                      style: TextStyle(fontSize: 20),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             SizedBox(),
                             RichText(
                               text: TextSpan(
@@ -588,33 +606,45 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                             ),
                             Row(
                               children: [
+                                Text(
+                                  'Description: ',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue, // Set the color here
+                                  ),
+                                ),
                                 Flexible(
                                   child: Text(
                                     _items[index].description!,
-                                    style:
-                                    TextStyle(fontSize: 25),
-                                    // maxLines: 1,
-                                    overflow:
-                                    TextOverflow.ellipsis,
+                                    style: TextStyle(fontSize: 25),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
                             ),
-                            _items[index].description != _items[index].desc && _items[index].desc != "" ?
-                            Row(
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    _items[index].desc!,
-                                    style:
-                                    TextStyle(fontSize: 20),
-                                    // maxLines: 1,
-                                    overflow:
-                                    TextOverflow.ellipsis,
+// Check if _items[index].desc should be displayed
+                            if (_items[index].description != _items[index].desc &&
+                                _items[index].desc != "")
+                              Row(
+                                children: [
+                                  Text(
+                                    'Extended Description: ',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue, // Set the color here
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ):
+                                  Flexible(
+                                    child: Text(
+                                      _items[index].desc!,
+                                      style: TextStyle(fontSize: 20),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             SizedBox(),
                             RichText(
                               text: TextSpan(
