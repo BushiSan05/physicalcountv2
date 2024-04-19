@@ -365,7 +365,7 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
                                               "[Update][Audit scan ID to update scanned item quantity.]",
                                               _notSyncNF[index]['id'].toString(),
                                               _notSyncNF[index]['barcode'].toString(),
-                                              _notSyncNF[index]['inputted_desc'].toString(),
+                                              _notSyncNF[index]['inputted_description'].toString(),
                                               _notSyncNF[index]['uom'].toString(),
                                               _notSyncNF[index]['lot_number'].toString(),
                                               // _notSyncNF[index]['batch_number'].toString(),

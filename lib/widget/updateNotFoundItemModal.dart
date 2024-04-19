@@ -122,6 +122,7 @@ updateNotFoundItemModal(
                       ),
                     ),
                   ),
+                  SizedBox(height: 10.0),
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                     child: Text("Inputted Description",
@@ -171,6 +172,7 @@ updateNotFoundItemModal(
                       },
                     ),
                   ),
+                  SizedBox(height: 10.0),
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                     child: Text("Lot/Batch Number",
@@ -359,9 +361,11 @@ updateNotFoundItemModal(
                           String? formattedExpiryDate = selectedDate != null
                               ? DateFormat('yyyy-MM-dd').format(selectedDate!)
                               : null;
+                          print("mao ni edited desc ${descController.text.trim()}");
 
                           await db.updateItemNotFoundWhere(int.parse(id),
                               'uom = "${_selectedUom.trim()}", ' +
+                              'inputted_description = "${descController.text.trim()}", ' +
                                   (lotnoController.text.trim().isNotEmpty
                                       ? "lot_number = '${lotnoController.text.trim().toUpperCase()}',"
                                       : "lot_number = NULL,") +

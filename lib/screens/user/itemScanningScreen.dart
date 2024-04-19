@@ -573,8 +573,7 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
                           GlobalVariables.isAuditLogged = false;
                           customLogicalModal(
                               context,
-                              Text(
-                                  "Are you sure you want to save this item?"),
+                              Text("Are you sure you want to save this item?"),
                                   () =>
                                   Navigator.pop(context),
                                   () async {
