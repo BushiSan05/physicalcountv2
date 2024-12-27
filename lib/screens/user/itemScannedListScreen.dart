@@ -359,8 +359,9 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                             //     ],
                             //   ),
                             // ),
-                            GlobalVariables.countType == 'ANNUAL'
-                                ? RichText(
+                            // GlobalVariables.countType == 'ANNUAL'
+                            //     ?
+                            RichText(
                               text: TextSpan(
                                 children: [
                                   TextSpan(
@@ -370,9 +371,9 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                           fontWeight: FontWeight.bold)
                                   ),
                                   TextSpan(
-                                    text: _items2[index]['expiry'],
-                                    // ? _items2[index]['expiry'] // Assuming _items[index].expiry is a String
-                                    // : "null",
+                                    text: _items2[index]['expiry'] != null
+                                    ? _items2[index]['expiry']
+                                    : "null",
                                     style: TextStyle(
                                       fontSize: 15,
                                       color: Colors.black,
@@ -380,8 +381,9 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                   ),
                                 ],
                               ),
-                            )
-                                : SizedBox(),
+                            ),
+                                // :
+                            SizedBox(),
                             RichText(
                               text: TextSpan(
                                 children: [
@@ -708,8 +710,9 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                             //     ],
                             //   ),
                             // ),
-                            GlobalVariables.countType == 'ANNUAL'
-                                ? RichText(
+                            // GlobalVariables.countType == 'ANNUAL'
+                            //     ?
+                            RichText(
                               text: TextSpan(
                                 children: [
                                   TextSpan(
@@ -732,8 +735,9 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
 
                                 ],
                               ),
-                            )
-                                : SizedBox(),
+                            ),
+                                // :
+                            SizedBox(),
                             RichText(
                               text: TextSpan(
                                 children: [

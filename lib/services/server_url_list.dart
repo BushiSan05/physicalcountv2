@@ -1,15 +1,15 @@
 class ServerUrlList{
   //--------------------------> Note: Local IP should the same with the default IP @ server_url.dart<----------------------
   static var _serverUrlList = {'LOCAL'            : 'http://172.16.163.2:81/pcount_app/pcount_local_james/',
-                               //'LARAVEL'          : 'https://172.16.43.151:8090/',
-                               'DISTRIBUTION'     : 'http://172.16.163.2:81/pcount_app/pcount_pdc/',
-                               'ASC: MAIN'        : 'http://172.16.163.2:81/pcount_app/pcount_alturas/',
-                               'PLAZA MARCELA'    : 'http://172.16.163.2:81/pcount_app/pcount_pm/',
-                               'ISLAND CITY MALL' : 'http://172.16.163.2:81/pcount_app/pcount/',
-    // 'ISLAND CITY MALL' : 'http://172.16.163.2:81/pcount_app/pcount_local/',
-                               'ALTA CITTA'       : 'http://172.16.163.2:81/pcount_app/pcount_alta/',
-                               'ALTURAS TALIBON'  : 'http://172.16.163.2:81/pcount_app/pcount_alturas_talibon/', //SAMPLE ONLY
-                               'COLONNADE- COLON' : 'http://172.16.163.2:81/pcount_app/pcount_colonnade/',}; //SAMPLE ONLY
+                                'ASC: MAIN'        : 'http://172.16.163.2:81/pcount_app/pcount_alturas/',
+                                'ALTURAS TALIBON'  : 'http://172.16.163.2:81/pcount_app/pcount_alturas_talibon/',
+                                'ISLAND CITY MALL' : 'http://172.16.163.2:81/pcount_app/pcount/',
+                                'ALTA CITTA'       : 'http://172.16.163.2:81/pcount_app/pcount_alta/',
+                                'DISTRIBUTION'     : 'http://172.16.163.2:81/pcount_app/pcount_pdc/',
+                                'URC'              : 'http://172.16.163.2:81/pcount_app/pcount_urc/',
+
+                                'PLAZA MARCELA'    : 'http://172.16.163.2:81/pcount_app/pcount_pm/',};
+
 
   serverUrlKey()=> _serverUrlList.entries.map((e) => e.key).toList();
   serverUrlValue()=> _serverUrlList.entries.map((e) => e.value).toList();

@@ -70,6 +70,7 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
         selectedDate = picked;
       });
     }
+    print("ang selected date ni $selectedDate");
   }
 
   bool resetSelectedDate() {
@@ -406,8 +407,9 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
               //     )
               // ),
               SizedBox(height: 2.0),
-              GlobalVariables.countType == 'ANNUAL'
-              ? Padding(
+              // GlobalVariables.countType == 'ANNUAL'
+              // ?
+              Padding(
                 padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                 child: Row(
                   children: [
@@ -448,8 +450,9 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
                       ),
                   ],
                 ),
-              )
-              : SizedBox(height: 5.0),
+              ),
+              // :
+              SizedBox(height: 5.0),
               Padding(
                 padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                 child: Row(
@@ -598,11 +601,12 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
                                   // _itemCount.lotno = lotnoController.text.trim().toString().toUpperCase();
                                   // _itemCount.batno = batnoController.text.trim().toString().toUpperCase();
                                   // _itemCount.expiry = GlobalVariables.countType == 'ANNUAL' ? selectedDate?.toString() : null;
-                                  _itemCount.expiry = GlobalVariables.countType == 'ANNUAL'
-                                      ? selectedDate != null
-                                      ? DateFormat('yyyy-MM-dd').format(selectedDate!)
-                                      : null
-                                      : null;
+                                  // _itemCount.expiry = GlobalVariables.countType == 'ANNUAL'
+                                  //     ? selectedDate != null
+                                  //     ? DateFormat('yyyy-MM-dd').format(selectedDate!)
+                                  //     : null
+                                  //     : null;
+                                  _itemCount.expiry = selectedDate != null ? DateFormat('yyyy-MM-dd').format(selectedDate!) : null;
                                   _itemCount.qty = qtyController.text.trim();
                                   _itemCount.conqty = (int.parse(qtyController.text.trim()) * convQty).toString();
                                   _itemCount.location = GlobalVariables.currentBusinessUnit;

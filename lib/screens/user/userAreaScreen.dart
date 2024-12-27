@@ -119,31 +119,31 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                 ]
             ),
           ),
-          actions: [
-            GlobalVariables.countType != 'ANNUAL'
-                ? Row(
-              children: [
-                Text(
-                  "Enable Expiry Date: [${GlobalVariables.enableExpiry}]",
-                  style: TextStyle(color: Colors.blue),
-                ),
-                CupertinoSwitch(
-                    value: GlobalVariables.enableExpiry,
-                    onChanged: (val) async {
-                      var dtls =
-                          "[LOGIN][Audit scan ID to change expiry date switch.";
-                      GlobalVariables.isAuditLogged = false;
-                      await scanAuditModal(
-                          context, _sqfliteDBHelper, dtls);
-                      if (GlobalVariables.isAuditLogged == true) {
-                        GlobalVariables.enableExpiry = val;
-                        if (mounted) setState(() {});
-                      }
-                    }),
-              ],
-            )
-                : SizedBox(),
-          ],
+          // actions: [
+          //   GlobalVariables.countType != 'ANNUAL'
+          //       ? Row(
+          //     children: [
+          //       Text(
+          //         "Enable Expiry Date: [${GlobalVariables.enableExpiry}]",
+          //         style: TextStyle(color: Colors.blue),
+          //       ),
+          //       CupertinoSwitch(
+          //           value: GlobalVariables.enableExpiry,
+          //           onChanged: (val) async {
+          //             var dtls =
+          //                 "[LOGIN][Audit scan ID to change expiry date switch.";
+          //             GlobalVariables.isAuditLogged = false;
+          //             await scanAuditModal(
+          //                 context, _sqfliteDBHelper, dtls);
+          //             if (GlobalVariables.isAuditLogged == true) {
+          //               GlobalVariables.enableExpiry = val;
+          //               if (mounted) setState(() {});
+          //             }
+          //           }),
+          //     ],
+          //   )
+          //       : SizedBox(),
+          // ],
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,31 +151,30 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
             checking ? LinearProgressIndicator() : SizedBox(),
             !checking
                 ? Expanded(
-              child: Scrollbar(
-                child: ListView.builder(
-                  itemCount: _assignArea.length,
-                  itemBuilder: (context, index) {
-                    var data = _assignArea;
-                    var countData = countType;
-                    if (index >= 0 && index < countData.length) {
-                      var scheduledDate = DateTime.parse(countData[index]['batchDate']);
+                  child: Scrollbar(
+                    child: ListView.builder(
+                      itemCount: _assignArea.length,
+                      itemBuilder: (context, index) {
+                        var data = _assignArea;
+                        var countData = countType;
+                        if (index >= 0 && index < countData.length) {
+                          var scheduledDate = DateTime.parse(countData[index]['batchDate']);
 
-                      if (!isWithinOneWeek(scheduledDate)) {
-                        // Skip adding this item to the list
-                        return SizedBox.shrink();
-                      }
+                          if (!isWithinOneWeek(scheduledDate)) {
+                            // Skip adding this item to the list
+                            return SizedBox.shrink();
+                          }
+                          print("Scheduled Date: $scheduledDate");
+                          print("Is Within One Week: ${isWithinOneWeek(scheduledDate)}");
+                        } else {
+                          // Handle the case when index is out of bounds, e.g., print an error message or provide a default value.
+                          print('Invalid index: $index');
+                        }
+                        for (int i = 0; i < countData.length; i++) {
+                          print("Index: $i, Data: ${countData[i]}");
+                        }
 
-                      print("Scheduled Date: $scheduledDate");
-                      print("Is Within One Week: ${isWithinOneWeek(scheduledDate)}");
-                    } else {
-                      // Handle the case when index is out of bounds, e.g., print an error message or provide a default value.
-                      print('Invalid index: $index');
-                    }
-                    for (int i = 0; i < countData.length; i++) {
-                      print("Index: $i, Data: ${countData[i]}");
-                    }
-
-                    print("mao ni index: $index");
+                        print("mao ni index: $index");
 
 
 

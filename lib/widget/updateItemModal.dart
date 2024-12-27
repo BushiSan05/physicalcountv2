@@ -238,8 +238,9 @@ updateItemModal(
                   //   ],
                   // ),
                   SizedBox(height: 5.0),
-                  GlobalVariables.countType == 'ANNUAL'
-                      ? Row(
+                  // GlobalVariables.countType == 'ANNUAL'
+                  //     ?
+                    Row(
                           children: [
                             RichText(
                               text: TextSpan(
@@ -296,8 +297,9 @@ updateItemModal(
                                   )
                                 )
                                ],
-                              )
-                  : SizedBox(height: 8.0),
+                              ),
+                  // :
+                    SizedBox(height: 8.0),
                   Row(
                     children: [
                       RichText(

@@ -286,7 +286,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   ),
                 ):
                 // SizedBox(),
-                SizedBox(width: 30,),
+                SizedBox(width: 30),
                 IconButton(
                   icon: Icon(Icons.logout, color: Colors.red),
                   color: Colors.white,
@@ -371,7 +371,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       MaterialPageRoute(
                           builder: (context) => CheckForUpdate()),
                     );*/
-                  }),
+                  }
+                  ),
                   // Divider(),
                   // MaterialButton(
                   //   child: Text("test"),
