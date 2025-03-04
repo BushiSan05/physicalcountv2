@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:physicalcountv2/db/models/itemCountModel.dart';
 import 'package:physicalcountv2/db/sqfLite_dbHelper.dart';
@@ -17,6 +18,8 @@ import 'package:physicalcountv2/services/server_url.dart';
 import 'package:physicalcountv2/widget/scanAuditModal.dart';
 import 'package:physicalcountv2/widget/scanRovingITModal.dart';
 
+import '../../db/models/itemNotFoundModel.dart';
+
 class UserAreaScreen extends StatefulWidget {
   const UserAreaScreen({Key? key}) : super(key: key);
 
@@ -26,11 +29,8 @@ class UserAreaScreen extends StatefulWidget {
 
 class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProviderStateMixin{
   ServerUrlList sul = ServerUrlList();
-  late SqfliteDBHelper _sqfliteDBHelper;
-  // Logs _log = Logs();
-  // DateFormat dateFormat = DateFormat("yyyy-MM-dd");
-  // DateFormat timeFormat = DateFormat("hh:mm:ss aaa");
 
+  late SqfliteDBHelper _sqfliteDBHelper;
   List _assignArea = [];
   bool checking = true;
   List countType = [];
@@ -38,13 +38,16 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
   bool btnSyncClick = false;
   int indexClick = -1;
   late AnimationController animationController;
+  int remainingCount1 = 0;
+  int remainingCount2 = 0;
+
+
   @override
   void initState() {
     _sqfliteDBHelper = SqfliteDBHelper.instance;
     if (mounted) setState(() {});
     checkingData = true;
     _refreshUserAssignAreaList();
-    //print("items count :: $_items");
     animationController = new AnimationController(
       vsync: this,
       duration: new Duration(seconds: 7),
@@ -65,7 +68,7 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
       List<ItemCount> x = await _sqfliteDBHelper.fetchItemCountWhere(
           "empno = '${GlobalVariables.logEmpNo}' AND business_unit = '${assignArea[i]['business_unit']}' AND department = '${assignArea[i]['department']}' AND section  = '${assignArea[i]['section']}' AND rack_desc  = '${assignArea[i]['rack_desc']}' AND location_id = '${assignArea[i]['location_id']}'");
       if(x.isNotEmpty){
-        await _lockUnlockLocation2(true, true, assignArea[i]['location_id'].toString()); /*print("empno = '${GlobalVariables.logEmpNo}' AND business_unit = '${assignArea[i]['business_unit']}' AND department = '${assignArea[i]['department']}' AND section  = '${assignArea[i]['section']}' AND rack_desc  = '${assignArea[i]['rack_desc']}' AND location_id = '${assignArea[i]['location_id']}'");*/
+        await _lockUnlockLocation2(true, true, assignArea[i]['location_id'].toString());
       }
       if(i == areaLen-1){
         checkingData = false;
@@ -74,11 +77,28 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
     }
   }
 
+  Future<int> getRemainingItemCount(String rackDesc) async {
+    final db = await _sqfliteDBHelper.database;
+    List<Map<String, dynamic>> result = await db.rawQuery(
+        "SELECT COUNT(*) as count FROM ${ItemCount.tblItemCount} WHERE exported != 'EXPORTED' AND rack_desc = ?",
+        [rackDesc]  // Correct way to pass parameters
+    );
+    return result.isNotEmpty ? result.first["count"] as int : 0;
+  }
+
+  Future<int> getRemainingNfItemCount(String rackDesc) async {
+    final db = await _sqfliteDBHelper.database;
+    List<Map<String, dynamic>> result = await db.rawQuery(
+        "SELECT COUNT(*) as count FROM ${ItemNotFound.tblItemNotFound} WHERE exported != 'EXPORTED' AND rack_desc = ?",
+        [rackDesc]  // Correct way to pass parameters
+    );
+    return result.isNotEmpty ? result.first["count"] as int : 0;
+  }
+
   bool isWithinOneWeek(DateTime scheduledDate) {
     final now = DateTime.now();
     final oneWeekBefore = now.subtract(Duration(days: 7));
     final oneWeekLater = now.add(Duration(days: 7));
-
     return scheduledDate.isAfter(oneWeekBefore) && scheduledDate.isBefore(oneWeekLater);
   }
 
@@ -108,7 +128,33 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                 children: [
                   IconButton(
                     icon: Icon(Icons.close, color: Colors.red),
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () async {
+                      var count = await _sqfliteDBHelper.selectItemCountRawQuery(
+                          "SELECT COUNT(*) as totalCount FROM ${ItemCount.tblItemCount} WHERE exported != 'EXPORTED'"
+                      );
+                      var count2 = await _sqfliteDBHelper.selectItemCountRawQuery(
+                          "SELECT COUNT(*) as totalNF FROM ${ItemNotFound.tblItemNotFound} WHERE exported != 'EXPORTED'"
+                      );
+                      var result1 = count.isNotEmpty && count[0]['totalCount'] != null ? count[0]['totalCount'] : 0;
+                      var result2 = count2.isNotEmpty && count2[0]['totalNF'] != null ? count2[0]['totalNF'] : 0;
+                      // Only proceed to close if both counts are 0
+                      if (result1 == 0 && result2 == 0) {
+                        print("Closing screen, no items left: $result1 and $result2");
+                        Navigator.of(context).pop();
+                      } else {
+                        Fluttertoast.showToast(
+                          msg: 'There are still items that have not been synced.\n'
+                              'Please review the scanned items and proceed with syncing.',
+                          toastLength: Toast.LENGTH_LONG,
+                          gravity: ToastGravity.BOTTOM,
+                          backgroundColor: Colors.black54,
+                          textColor: Colors.white,
+                          fontSize: 16.0,
+                        );
+                        print("Items still exist. Can't close the screen.");
+                        print("Counts are $result1 and $result2");
+                      }
+                    },
                   ),
                   Expanded(
                     child: Text(
@@ -119,31 +165,6 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                 ]
             ),
           ),
-          // actions: [
-          //   GlobalVariables.countType != 'ANNUAL'
-          //       ? Row(
-          //     children: [
-          //       Text(
-          //         "Enable Expiry Date: [${GlobalVariables.enableExpiry}]",
-          //         style: TextStyle(color: Colors.blue),
-          //       ),
-          //       CupertinoSwitch(
-          //           value: GlobalVariables.enableExpiry,
-          //           onChanged: (val) async {
-          //             var dtls =
-          //                 "[LOGIN][Audit scan ID to change expiry date switch.";
-          //             GlobalVariables.isAuditLogged = false;
-          //             await scanAuditModal(
-          //                 context, _sqfliteDBHelper, dtls);
-          //             if (GlobalVariables.isAuditLogged == true) {
-          //               GlobalVariables.enableExpiry = val;
-          //               if (mounted) setState(() {});
-          //             }
-          //           }),
-          //     ],
-          //   )
-          //       : SizedBox(),
-          // ],
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,10 +194,7 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                         for (int i = 0; i < countData.length; i++) {
                           print("Index: $i, Data: ${countData[i]}");
                         }
-
                         print("mao ni index: $index");
-
-
 
                     return Padding(
                       padding:
@@ -212,8 +230,6 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                   style: TextStyle(fontSize: 25),
                                 ),
                               ),
-                              // Expanded(
-                              //   child:
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 10),
                                 child: Row(
@@ -222,28 +238,53 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                   children: <Widget>[
                                     Column(
                                       children: <Widget>[
-                                        Text(
-                                          // 'Count Type: ' + countData[index]['countType'],
-                                          'Count Type: ' + (index < countData.length ? countData[index]['countType'] : 'Invalid Index'),
-                                          style: TextStyle(color: Colors.deepOrange, fontSize: 12),
+                                        RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: 'Count Type: ',
+                                                style: TextStyle(color: Colors.black, fontSize: 12),
+                                              ),
+                                              TextSpan(
+                                                text: (index < countData.length ? countData[index]['countType'] : 'Invalid Index'),
+                                                style: TextStyle(color: Colors.deepOrange, fontSize: 12),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        Text(
-                                          // 'Type: ' + cdata[index]['ctype'],
-                                          'Category: ' + (index < countData.length ? countData[index]['ctype'] : 'Invalid Index'),
-                                          style: TextStyle(color: Colors.deepOrange, fontSize: 12),
+                                        RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: 'Category: ',
+                                                style: TextStyle(color: Colors.black, fontSize: 12),
+                                              ),
+                                              TextSpan(
+                                                text: (index < countData.length ? countData[index]['ctype'] : 'Invalid Index'),
+                                                style: TextStyle(color: Colors.deepOrange, fontSize: 12),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        Text(
-                                          // 'Sched: ' + countData[index]['batchDate'],
-                                          'Sched: ' + (index < countData.length ? countData[index]['batchDate'] : 'Invalid Index'),
-                                          style: TextStyle(color: Colors.deepOrange, fontSize: 12),
+                                        RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: 'Sched: ',
+                                                style: TextStyle(color: Colors.black, fontSize: 12),
+                                              ),
+                                              TextSpan(
+                                                text: (index < countData.length ? countData[index]['batchDate'] : 'Invalid Index'),
+                                                style: TextStyle(color: Colors.deepOrange, fontSize: 12),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     )
                                   ],
                                 ),
                               ),
-                              // ),
-                              // Spacer(),
                             ],
                           ),
                           Row(
@@ -254,7 +295,6 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                 const EdgeInsets.only(right: 8.0),
                                 child: ElevatedButton(
                                   onPressed: () async {
-                                    // print('BATCH DATE: ${countData[index]['batchDate']}');
                                     final batchDate = DateFormat("yyyy-MM-dd").parse(countData[index]['batchDate']);
                                     final dateTimeNow = DateTime.now();
                                     print('BATCH DATE: $batchDate');
@@ -268,15 +308,13 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                       GlobalVariables.currentRackDesc = data[index]['rack_desc'];
                                       var dtls = "[LOGIN][Audit] scan ID to add item on location (${data[index]['business_unit']}/${data[index]['department']}/${data[index]['section']}/${data[index]['rack_desc']}).]";
                                       GlobalVariables.isAuditLogged = false;
-                                      await scanAuditModal(context, _sqfliteDBHelper, dtls);
-                                      if (GlobalVariables.isAuditLogged == true) {
+                                      // await scanAuditModal(context, _sqfliteDBHelper, dtls);
                                         Navigator.push(context,
                                           MaterialPageRoute(builder: (context) =>
                                               ItemScanningScreen()),
                                         ).then((value) {
                                           _refreshUserAssignAreaList();
                                         });
-                                      }
                                     } else {
                                       instantMsgModal(
                                           context,
@@ -299,60 +337,139 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                   ),
                                 ),
                               ),
+
                               Padding(
-                                padding:
-                                const EdgeInsets.only(right: 8.0),
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    GlobalVariables.currentLocationID   = data[index]['location_id'];
-                                    GlobalVariables.currentBusinessUnit = data[index]['business_unit'];
-                                    GlobalVariables.currentDepartment   = data[index]['department'];
-                                    GlobalVariables.currentSection      = data[index]['section'];
-                                    GlobalVariables.currentRackDesc     = data[index]['rack_desc'];
-                                    GlobalVariables.ableEditDelete      = false;
-                                    Navigator.push(context,
-                                      MaterialPageRoute(builder: (context) =>
-                                      //ViewItemScannedListScreen()),
-                                      ItemScannedListScreen()),
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      primary: Colors.yellow[700]),
-                                  child: Row(
-                                    children: [
-                                      Icon(CupertinoIcons.doc_plaintext),
-                                      Text("View-S"),
-                                    ],
-                                  ),
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        GlobalVariables.currentLocationID   = data[index]['location_id'];
+                                        GlobalVariables.currentBusinessUnit = data[index]['business_unit'];
+                                        GlobalVariables.currentDepartment   = data[index]['department'];
+                                        GlobalVariables.currentSection      = data[index]['section'];
+                                        GlobalVariables.currentRackDesc     = data[index]['rack_desc'];
+                                        GlobalVariables.ableEditDelete      = false;
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => ItemScannedListScreen()),
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(primary: Colors.yellow[700]),
+                                      child: Row(
+                                        children: [
+                                          Icon(CupertinoIcons.doc_plaintext),
+                                          SizedBox(width: 5),
+                                          Text("View-S"),
+                                        ],
+                                      ),
+                                    ),
+                                    // Counter badge positioned at the upper right corner
+                                    FutureBuilder<int>(
+                                      future: getRemainingItemCount(data[index]['rack_desc']),
+                                      builder: (context, snapshot) {
+                                        int remainingCount = snapshot.data ?? 0;
+                                        if (remainingCount > 0) {
+                                          return Positioned(
+                                            right: -5,
+                                            top: -8,
+                                            child: Container(
+                                              padding: EdgeInsets.all(5),
+                                              decoration: BoxDecoration(
+                                                color: Colors.red,
+                                                shape: BoxShape.circle,
+                                                border: Border.all(color: Colors.white, width: 2),
+                                              ),
+                                              constraints: BoxConstraints(
+                                                minWidth: 22,
+                                                minHeight: 22,
+                                              ),
+                                              child: Text(
+                                                '$remainingCount',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                        return SizedBox(); // Return empty widget if count is 0
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    GlobalVariables.currentLocationID   = data[index]['location_id'];
-                                    GlobalVariables.currentBusinessUnit = data[index]['business_unit'];
-                                    GlobalVariables.currentDepartment   = data[index]['department'];
-                                    GlobalVariables.currentSection      = data[index]['section'];
-                                    GlobalVariables.currentRackDesc     = data[index]['rack_desc'];
-                                    GlobalVariables.ableEditDelete      = false;
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) =>
-                                      //ViewItemNotFoundScanScreen()),
-                                      ItemNotFoundScanScreen()),
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      primary: Colors.yellow[700]),
-                                  child: Row(
-                                    children: [
-                                      Icon(CupertinoIcons.doc_plaintext),
-                                      Text("View-NF"),
-                                    ],
-                                  ),
+                                child: Stack(
+                                  clipBehavior: Clip.none,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        GlobalVariables.currentLocationID   = data[index]['location_id'];
+                                        GlobalVariables.currentBusinessUnit = data[index]['business_unit'];
+                                        GlobalVariables.currentDepartment   = data[index]['department'];
+                                        GlobalVariables.currentSection      = data[index]['section'];
+                                        GlobalVariables.currentRackDesc     = data[index]['rack_desc'];
+                                        GlobalVariables.ableEditDelete      = false;
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) =>
+                                          ItemNotFoundScanScreen()),
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(primary: Colors.yellow[700]),
+                                      child: Row(
+                                        children: [
+                                          Icon(CupertinoIcons.doc_plaintext),
+                                          SizedBox(width: 5),
+                                          Text("View-NF"),
+                                        ],
+                                      ),
+                                    ),
+                                    // Counter badge positioned at the upper right corner
+                                    FutureBuilder<int>(
+                                      future: getRemainingNfItemCount(data[index]['rack_desc']),
+                                      builder: (context, snapshot) {
+                                        int remainingCount = snapshot.data ?? 0;
+                                        if (remainingCount > 0) {
+                                          return Positioned(
+                                            right: -5,
+                                            top: -8,
+                                            child: Container(
+                                              padding: EdgeInsets.all(5),
+                                              decoration: BoxDecoration(
+                                                color: Colors.red,
+                                                shape: BoxShape.circle,
+                                                border: Border.all(color: Colors.white, width: 2),
+                                              ),
+                                              constraints: BoxConstraints(
+                                                minWidth: 22,
+                                                minHeight: 22,
+                                              ),
+                                              child: Text(
+                                                '$remainingCount',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                        return SizedBox(); // Return empty widget if count is 0
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
+
                               Padding(
                                 padding:
                                 const EdgeInsets.only(right: 8.0),
@@ -402,7 +519,6 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                         btnSyncClick = true;
                                         indexClick = index;
                                       });
-                                      // var res = "connected";
                                       var res = await checkConnection();
                                       if (res == 'connected') {
                                         showDialog(
@@ -416,16 +532,14 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                                   TextButton(
                                                       child: Text("Yes"),
                                                       onPressed: ()async{
-                                                        //Navigator.of(context).pop();
-                                                        // await scanRovingITModal(context, _sqfliteDBHelper);
-                                                        // if(GlobalVariables.isRovingITAccess){
-                                                        //   GlobalVariables.isRovingITAccess = false;
                                                         print("Still here!");
                                                         GlobalVariables.currentLocationID   = data[index]['location_id'];
                                                         GlobalVariables.currentBusinessUnit = data[index]['business_unit'];
                                                         GlobalVariables.currentDepartment   = data[index]['department'];
                                                         GlobalVariables.currentSection      = data[index]['section'];
                                                         GlobalVariables.currentRackDesc     = data[index]['rack_desc'];
+                                                        int count1 = await getRemainingItemCount(data[index]['rack_desc']);
+                                                        int count2 = await getRemainingNfItemCount(data[index]['rack_desc']);
                                                         setState(() {
                                                           btnSyncClick = false;
                                                           indexClick = index;
@@ -436,7 +550,15 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
                                                           MaterialPageRoute(
                                                               builder: (context) =>
                                                                   SyncScannedItemScreen()),
-                                                        );
+                                                        )..then((result) {
+                                                          if (result != null && result == true) {
+                                                            // Data was synced successfully, update the UI counts
+                                                            setState(() {
+                                                              remainingCount1 = count1;
+                                                              remainingCount2 = count2;
+                                                            });
+                                                          }
+                                                        });
                                                       }
                                                     // },
                                                   ),
@@ -537,10 +659,7 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
     _assignArea = await _sqfliteDBHelper.selectUserArea(GlobalVariables.logEmpNo, sul.server(ServerUrl.urlCI));
     countType = await _sqfliteDBHelper.getCountTypeDate(GlobalVariables.logEmpNo, sul.server(ServerUrl.urlCI));
 
-    // countType = await _sqfliteDBHelper.getCountTypeDate(GlobalVariables.logEmpNo);
-
     if (_assignArea.length > 0 && countType.length > 0) {
-      //checking = false;
       if (mounted) setState(() {});
     } else {
       var user = int.parse(GlobalVariables.logEmpNo) * 1;
@@ -549,7 +668,6 @@ class _UserAreaScreenState extends State<UserAreaScreen> with SingleTickerProvid
       print("mao ni assign area: $_assignArea");
       print("kani ang counttype: $countType");
       print("-------");
-      //checking = false;
       if (mounted) setState(() {});
     }
     if(checkingData){

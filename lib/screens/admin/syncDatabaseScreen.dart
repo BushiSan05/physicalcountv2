@@ -148,6 +148,16 @@ class _SyncDatabaseScreenState extends State<SyncDatabaseScreen>
               style: TextStyle(color: Colors.blue),
             ),
           ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20.0),
+              child: Center(
+                child: Text("${sul.server(ServerUrl.urlCI)}",
+                  style: TextStyle(color: Colors.black), // Customize the style as needed
+                ),
+              ),
+            ),
+          ],
         ),
         body: SafeArea(
           child: Column(

@@ -20,27 +20,22 @@ updateNotFoundItemModal(
     String inputted_desc,
     String uom,
     String lotno,
-    // String batno,
     String expiry,
     String qty,
     List units) {
   late FocusNode myFocusNodeDesc;
   late FocusNode myFocusNodeLotno;
-  // late FocusNode myFocusNodeBatno;
   late FocusNode myFocusNodeQty;
   myFocusNodeLotno = FocusNode();
   myFocusNodeDesc = FocusNode();
-  // myFocusNodeBatno = FocusNode();
   myFocusNodeQty = FocusNode();
 
   final lotnoController = TextEditingController();
   final descController = TextEditingController();
-  // final batnoController = TextEditingController();
   final qtyController = TextEditingController();
   DateTime? selectedDate;
 
   myFocusNodeDesc.requestFocus();
-  // ItemNotFound _itemNotFound = ItemNotFound();
 
   var _uom = units;
   String _selectedUom = uom;
@@ -72,16 +67,33 @@ updateNotFoundItemModal(
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate ?? DateTime.now(),
+      initialDate: selectedDate ?? DateTime.now(), // Use DateTime.now() if selectedDate is null
       firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
     );
     if (picked != null) {
-      selectedDate = picked;
+      DateTime today = DateTime.now();
+      if (picked.isBefore(DateTime(today.year, today.month, today.day))) {
+        showCupertinoDialog(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: Text("Expired Item"),
+            content: Text("You have selected an expired date."),
+            actions: [
+              CupertinoDialogAction(
+                child: Text("Proceed"),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        );
+          selectedDate = picked;
+      } else {
+          selectedDate = picked;
+      }
     }
+    print("ang selected date ni $selectedDate");
   }
-
-
 
   return showModalBottomSheet(
     isScrollControlled: true,
@@ -203,37 +215,6 @@ updateNotFoundItemModal(
                       ),
                     ),
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                  //   child: Text("Batch Number",
-                  //       style: TextStyle(
-                  //           fontSize: 18,
-                  //           color: Colors.blue,
-                  //           fontWeight: FontWeight.bold)),
-                  // ),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(
-                  //       left: 20.0, right: 20.0, bottom: 10.0),
-                  //   child: Container(
-                  //     width: BodySize.wdth / 2,
-                  //     child: TextFormField(
-                  //       // autofocus: true,
-                  //       focusNode: myFocusNodeBatno,
-                  //       controller: batnoController,
-                  //       style: TextStyle(fontSize: 25),
-                  //       // keyboardType: TextInputType.number,
-                  //       decoration: InputDecoration(
-                  //         contentPadding:
-                  //         EdgeInsets.all(8.0), //here your padding
-                  //         border: OutlineInputBorder(
-                  //             borderRadius: BorderRadius.circular(3)),
-                  //       ),
-                  //       onFieldSubmitted: (value) {
-                  //         myFocusNodeQty.requestFocus();
-                  //       },
-                  //     ),
-                  //   ),
-                  // ),
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                     child: Text("Expiry Date",
@@ -317,9 +298,6 @@ updateNotFoundItemModal(
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(3)),
                         ),
-                        // onFieldSubmitted: (value) {
-                        //   qtyController.clear();
-                        // },
                         onChanged: (value) {
                           if(value.characters.first=='0' || validCharacters.hasMatch(value)==false){
                             qtyController.clear();

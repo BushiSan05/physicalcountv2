@@ -56,10 +56,28 @@ saveNotFoundBarcode(BuildContext context, SqfliteDBHelper db, List units) {
       firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
     );
-    if (picked != null)
-      {
-        selectedDate = picked;
+    if (picked != null) {
+      DateTime today = DateTime.now();
+      if (picked.isBefore(DateTime(today.year, today.month, today.day))) {
+        showCupertinoDialog(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: Text("Expired Item"),
+            content: Text("You have selected an expired date."),
+            actions: [
+              CupertinoDialogAction(
+                child: Text("Proceed"),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        );
+          selectedDate = picked;
+      } else {
+          selectedDate = picked;
+      }
     }
+    print("ang selected date ni $selectedDate");
   }
 
 
@@ -128,7 +146,6 @@ saveNotFoundBarcode(BuildContext context, SqfliteDBHelper db, List units) {
                             color: Colors.blue,
                             fontWeight: FontWeight.bold)),
                   ),
-                  //01000006481
                   Padding(
                     padding: const EdgeInsets.only(
                         left: 20.0, right: 20.0, bottom: 10.0),
@@ -145,7 +162,7 @@ saveNotFoundBarcode(BuildContext context, SqfliteDBHelper db, List units) {
                             borderRadius: BorderRadius.circular(3)),
                       ),
                       onFieldSubmitted: (value) async {
-                        //  myFocusNodeQty.requestFocus();
+                         myFocusNodeDesc.requestFocus();
                         var res=await db.validateBarcode(value);
                         itemNotFound=res;
                         if(itemNotFound.isNotEmpty){
@@ -257,7 +274,6 @@ saveNotFoundBarcode(BuildContext context, SqfliteDBHelper db, List units) {
                             fontSize: 20,
                             color: Colors.blue,
                             fontWeight: FontWeight.bold)),
-
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
@@ -278,51 +294,14 @@ saveNotFoundBarcode(BuildContext context, SqfliteDBHelper db, List units) {
                               borderRadius: BorderRadius.circular(3)),
                         ),
                         onFieldSubmitted: (value) {
-                          if (barcodeController.text.isNotEmpty &&
-                              // lotnumController.text.isNotEmpty &&
-                              _selectedUom!='')
                           myFocusNodeQty.requestFocus();
+                          if (barcodeController.text.isNotEmpty &&
+                              _selectedUom!='')
                           btnSaveEnabled=false;
                         },
                       ),
                     ),
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                  //   child: Text("Batch Number",
-                  //       style: TextStyle(
-                  //           fontSize: 20,
-                  //           color: Colors.blue,
-                  //           fontWeight: FontWeight.bold)),
-                  //
-                  // ),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(
-                  //       left: 20.0, right: 20.0, bottom: 10.0),
-                  //   child: Container(
-                  //     width: BodySize.wdth / 2,
-                  //     child: TextFormField(
-                  //       autofocus: true,
-                  //       focusNode: myFocusNodeBatno,
-                  //       style: TextStyle(fontSize: 20),
-                  //       controller: batnoController,
-                  //       // keyboardType: TextInputType.number,
-                  //       decoration: InputDecoration(
-                  //         contentPadding:
-                  //         EdgeInsets.all(8.0), //here your padding
-                  //         border: OutlineInputBorder(
-                  //             borderRadius: BorderRadius.circular(3)),
-                  //       ),
-                  //       onFieldSubmitted: (value) {
-                  //         if (barcodeController.text.isNotEmpty &&
-                  //             // lotnumController.text.isNotEmpty &&
-                  //             _selectedUom!='')
-                  //           myFocusNodeQty.requestFocus();
-                  //         btnSaveEnabled=false;
-                  //       },
-                  //     ),
-                  //   ),
-                  // ),
                   Padding(
                     padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                     child: Text("Expiry Date",
@@ -336,7 +315,7 @@ saveNotFoundBarcode(BuildContext context, SqfliteDBHelper db, List units) {
                     children: [
                         Container(
                           padding: const EdgeInsets.only(left: 20.0, right: 20.0, bottom: 10.0),
-                          width: MediaQuery.of(context).size.width / 1.8,
+                          width: BodySize.wdth / 2,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               fixedSize: Size(20, 50),
@@ -404,12 +383,6 @@ saveNotFoundBarcode(BuildContext context, SqfliteDBHelper db, List units) {
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(3)),
                         ),
-                        onFieldSubmitted: (value) {
-                          lotnoController.clear();
-                          // batnoController.clear();
-                          qtyController.clear();
-                          btnSaveEnabled=false;
-                        },
                         onChanged: (value) {
                           if(value.isEmpty){
                             btnSaveEnabled = false;
@@ -420,9 +393,8 @@ saveNotFoundBarcode(BuildContext context, SqfliteDBHelper db, List units) {
                             btnSaveEnabled = false;
                             setModalState(() {});
                           }
-                          if (barcodeController.text.isNotEmpty &&
-                              qtyController.text.isNotEmpty &&
-                              _selectedUom!='') {
+                          if (barcodeController.text.isNotEmpty || descController.text.isNotEmpty &&
+                              _selectedUom!='' && qtyController.text.isNotEmpty) {
                             btnSaveEnabled = true;
                             setModalState(() {});
                           } else {

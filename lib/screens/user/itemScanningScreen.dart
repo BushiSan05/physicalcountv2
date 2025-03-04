@@ -28,11 +28,9 @@ class ItemScanningScreen extends StatefulWidget {
 class _ItemScanningScreenState extends State<ItemScanningScreen> {
   late FocusNode myFocusNodeBarcode;
   late FocusNode myFocusNodeLotno;
-  // late FocusNode myFocusNodeBatno;
   late FocusNode myFocusNodeQty;
   final barcodeController = TextEditingController();
   final lotnoController = TextEditingController();
-  // final batnoController = TextEditingController();
   final qtyController = TextEditingController();
   final auditIDController = TextEditingController();
   List units = [];
@@ -48,15 +46,13 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
   late SqfliteDBHelper _sqfliteDBHelper;
   Logs _log = Logs();
   DateFormat dateFormat = DateFormat("yyyy-MM-dd");
-  // DateFormat timeFormat = DateFormat("hh:mm:ss aaa");
   DateFormat timeFormat = DateFormat("HH:mm:ss");
   List<ItemCount> _items = [];
-  // DateTime selectedDate = DateTime.now();
+  List<ItemNotFound> _nfitems = [];
   DateTime? selectedDate;
   final validCharacters = RegExp(r'^[0-9]+$');
   bool _loading = true;
-  // DateTime selectedDate =
-  //     DateTime.parse("0000-00-00"); //-0001-11-30 00:00:00.000
+
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -66,9 +62,29 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
       lastDate: DateTime(2101),
     );
     if (picked != null) {
-      setState(() {
-        selectedDate = picked;
-      });
+      DateTime today = DateTime.now();
+      if (picked.isBefore(DateTime(today.year, today.month, today.day))) {
+        showCupertinoDialog(
+            context: context,
+            builder: (context) => CupertinoAlertDialog(
+              title: Text("Expired Item"),
+              content: Text("You have selected an expired date."),
+              actions: [
+                CupertinoDialogAction(
+                  child: Text("Proceed"),
+                  onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        );
+        setState(() {
+          selectedDate = picked;
+        });
+      } else {
+        setState(() {
+          selectedDate = picked;
+        });
+      }
     }
     print("ang selected date ni $selectedDate");
   }
@@ -93,11 +109,9 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
     if (mounted) setState(() {});
     myFocusNodeBarcode = FocusNode();
     myFocusNodeLotno = FocusNode();
-    // myFocusNodeBatno = FocusNode();
     myFocusNodeQty = FocusNode();
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -112,10 +126,15 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
             icon: Icon(Icons.close, color: Colors.red),
             onPressed: () async {
               await _refreshItemList();
-              if (_items.length > 0) {
+              await _refreshNfItemList();
+              if (_items.length > 0 || _nfitems.length > 0) {
+                print("$_items ug $_nfitems");
                 customLogicalModal(
                     context,
-                    Text("Are you finished scanning this area? Click YES to tag this area FINISHED. Setting this area to FINISHED will auto lock the area. Continue?"),
+                    Text("Are you finished scanning this area? \n"
+                        "Click YES to tag this area FINISHED. \n"
+                        "Setting this area to FINISHED will lock the area. Continue?",
+                        textAlign: TextAlign.center),
                     () => Navigator.pop(context), () async {
                   var dtls = "[FINISHED][Audit tag rack (${GlobalVariables.currentBusinessUnit}/${GlobalVariables.currentDepartment}/${GlobalVariables.currentSection}/${GlobalVariables.currentRackDesc}) to FINISHED]";
                   GlobalVariables.isAuditLogged = false;
@@ -321,7 +340,7 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
                   padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                   child: Row(
                       children: [
-                      Text("Lot/Batch Number: ",
+                      Text("Lot/Batch Number:  ",
                       style: TextStyle(
                           fontSize: 20,
                           color: Colors.blue,
@@ -339,16 +358,6 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(3)),
                       ),
-                      // onChanged: (value) {
-                        // print(validCharacters.hasMatch(value));
-                        // if (barcodeController.text.isNotEmpty &&
-                        //     lotnoController.text.isNotEmpty) {
-                        //     if (mounted) setState(() {});
-                        // } else {
-                        //   btnSaveEnabled = false;
-                        //   if (mounted) setState(() {});
-                        // }
-                      // },
                       onFieldSubmitted: (value){
                         myFocusNodeQty.requestFocus();
                         btnSaveEnabled=false;
@@ -360,61 +369,13 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
                     ]
                   )
                 ),
-              // SizedBox(height: 3.0),
-              // Padding(
-              //     padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-              //     child: Row(
-              //         children: [
-              //           Text("Batch Number:  ",
-              //               style: TextStyle(
-              //                   fontSize: 20,
-              //                   color: Colors.blue,
-              //                   fontWeight: FontWeight.bold)),
-              //           Container(
-              //               width: MediaQuery.of(context).size.width / 5,
-              //               child: TextFormField(
-              //                 controller: batnoController,
-              //                 focusNode: myFocusNodeBatno,
-              //                 style: TextStyle(fontSize: 23),
-              //                 decoration: InputDecoration(
-              //                   contentPadding:
-              //                   EdgeInsets.all(8.0), //here your padding
-              //                   border: OutlineInputBorder(
-              //                       borderRadius: BorderRadius.circular(3)),
-              //                 ),
-              //                 onChanged: (value) {
-              //                   print(validCharacters.hasMatch(value));
-              //                   if(value.isEmpty){
-              //                     btnSaveEnabled=false;
-              //                   }
-              //                   if (barcodeController.text.isNotEmpty &&
-              //                       batnoController.text.isNotEmpty) {
-              //                     if (mounted) setState(() {});
-              //                   } else {
-              //                     btnSaveEnabled = false;
-              //                     if (mounted) setState(() {});
-              //                   }
-              //                 },
-              //                 onFieldSubmitted: (value){
-              //                   myFocusNodeQty.requestFocus();
-              //                   btnSaveEnabled=false;
-              //                   if(mounted) setState(() {
-              //                   });
-              //                 },
-              //               )
-              //           )
-              //         ]
-              //     )
-              // ),
               SizedBox(height: 2.0),
-              // GlobalVariables.countType == 'ANNUAL'
-              // ?
               Padding(
                 padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                 child: Row(
                   children: [
                     Text(
-                      "Expiry Date:    ",
+                      "Expiry Date:  ",
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.blue,
@@ -457,7 +418,7 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
                 padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                 child: Row(
                   children: [
-                    Text("Quantity:                   ",
+                    Text("Quantity:  ",
                         style: TextStyle(
                             fontSize: 20,
                             color: Colors.blue,
@@ -481,7 +442,6 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
                           if(value.isEmpty){
                             btnSaveEnabled=false;
                           }
-                          //RegExp(r'^[a-zA-Z0-9_\-=@,\.;]+$')
                           if(value.contains('.') || value.characters.first=='0' || validCharacters.hasMatch(value)==false){
                             qtyController.clear();
                             btnSaveEnabled = false;
@@ -505,7 +465,6 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
                               btnSaveEnabled = false;
                               if (mounted) setState(() {});
                             }
-                          //  if (mounted) setState(() {});
                           } else {
                             btnSaveEnabled = false;
                             if (mounted) setState(() {});
@@ -531,7 +490,6 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
                         barcodeController.clear();
                         qtyController.clear();
                         lotnoController.clear();
-                        // batnoController.clear();
                         itemCode = "Unknown";
                         itemDescription = "Unknown";
                         desc = "Unknown";
@@ -598,14 +556,6 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
                                     _itemCount.lotno = null;
                                   }
 
-                                  // _itemCount.lotno = lotnoController.text.trim().toString().toUpperCase();
-                                  // _itemCount.batno = batnoController.text.trim().toString().toUpperCase();
-                                  // _itemCount.expiry = GlobalVariables.countType == 'ANNUAL' ? selectedDate?.toString() : null;
-                                  // _itemCount.expiry = GlobalVariables.countType == 'ANNUAL'
-                                  //     ? selectedDate != null
-                                  //     ? DateFormat('yyyy-MM-dd').format(selectedDate!)
-                                  //     : null
-                                  //     : null;
                                   _itemCount.expiry = selectedDate != null ? DateFormat('yyyy-MM-dd').format(selectedDate!) : null;
                                   _itemCount.qty = qtyController.text.trim();
                                   _itemCount.conqty = (int.parse(qtyController.text.trim()) * convQty).toString();
@@ -639,8 +589,6 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
                                       : "null";
                                   print("ang prevlot ky: ");
                                   print(GlobalVariables.prevLotno);
-                                  // GlobalVariables.prevBatno = batnoController.text.trim().toUpperCase();
-                                  // GlobalVariables.prevExpiry = DateFormat('MMMM dd, yyyy').format(selectedDate!);
                                   GlobalVariables.prevExpiry = selectedDate != null
                                       ? DateFormat('yyyy-MM-dd').format(selectedDate!)
                                       : "null";
@@ -648,7 +596,6 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
                                   GlobalVariables.prevDTCreated = dt;
                                   barcodeController.clear();
                                   lotnoController.clear();
-                                  // batnoController.clear();
                                   qtyController.clear();
                                   itemCode = "Unknown";
                                   itemDescription = "Unknown";
@@ -666,16 +613,6 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
                                       textColor: Colors.white,
                                       fontSize: 16.0);
                                 }
-                                // else {
-                                //   instantMsgModal(
-                                //       context,
-                                //       Icon(
-                                //         CupertinoIcons.exclamationmark_circle,
-                                //         color: Colors.red,
-                                //         size: 40,
-                                //       ),
-                                //       Text("Invalid Expiry Date."));
-                                // }
                               }
                           );
                         }
@@ -760,12 +697,6 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
                           style: TextStyle(fontSize: 13, color: Colors.white),
                         ),
                       ),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(left: 20.0, right: 20.0),
-                      //   child: Text("Batch Number: " + GlobalVariables.prevBatno,
-                      //     style: TextStyle(fontSize: 13, color: Colors.white),
-                      //   ),
-                      // ),
                       Padding(
                         padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                         child: Text("Expiry Date: " + GlobalVariables.prevExpiry,
@@ -793,6 +724,12 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
     _items = x;
     if (mounted) setState(() {});
   }
+  _refreshNfItemList() async {
+    List<ItemNotFound> y = await _sqfliteDBHelper.fetchNfItemCountWhere(
+        "empno = '${GlobalVariables.logEmpNo}' AND business_unit = '${GlobalVariables.currentBusinessUnit}' AND department = '${GlobalVariables.currentDepartment}' AND section  = '${GlobalVariables.currentSection}' AND rack_desc  = '${GlobalVariables.currentRackDesc}'");
+    _nfitems = y;
+    if (mounted) setState(() {});
+  }
   searchItem(String value) async {
     print(GlobalVariables.byCategory);
     print(GlobalVariables.byVendor);
@@ -811,7 +748,6 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
         convQty = int.parse(x[0]['conversion_qty']);
         if (mounted) setState(() {});
         myFocusNodeLotno.requestFocus();
-        // myFocusNodeQty.requestFocus();
       } else {
         itemNotFoundModal(
             context,
@@ -830,7 +766,6 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
         if (mounted) setState(() {});
         myFocusNodeBarcode.requestFocus();
         lotnoController.clear();
-        // batnoController.clear();
         qtyController.clear();
       }
     }
@@ -855,14 +790,6 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
         myFocusNodeLotno.requestFocus();
       } else {
         showAlertDialog();
-        // itemNotFoundModal(
-        //     context,
-        //     Icon(
-        //       CupertinoIcons.exclamationmark_circle,
-        //       color: Colors.red,
-        //       size: 40,
-        //     ),
-        //     Text("Item not found. Reason(s): 1.) Barcode not registered"));
         itemCode = "Unknown";
         itemDescription = "Unknown";
         desc = "Unknown";
@@ -894,7 +821,6 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
         convQty = int.parse(x[0]['conversion_qty']);
         if (mounted) setState(() {});
         myFocusNodeLotno.requestFocus();
-        // myFocusNodeQty.requestFocus();
       } else {
         itemNotFoundModal(
             context,
@@ -913,11 +839,11 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
         if (mounted) setState(() {});
         myFocusNodeBarcode.requestFocus();
         lotnoController.clear();
-        // batnoController.clear();
         qtyController.clear();
       }
     }
 //------BY CATEGORY == TRUE AND BY VENDOR = FALSE------//
+
 //------BY CATEGORY == FALSE AND BY VENDOR = TRUE------//
     if (GlobalVariables.byCategory == false &&
         GlobalVariables.byVendor == true) {
@@ -935,7 +861,6 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
         convQty = int.parse(x[0]['conversion_qty']);
         if (mounted) setState(() {});
         myFocusNodeLotno.requestFocus();
-        // myFocusNodeQty.requestFocus();
       } else {
         print(x);
         itemNotFoundModal(
@@ -955,11 +880,11 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
         if (mounted) setState(() {});
         myFocusNodeBarcode.requestFocus();
         lotnoController.clear();
-        // batnoController.clear();
         qtyController.clear();
       }
     }
 //------BY CATEGORY == FALSE AND BY VENDOR = TRUE------//
+
   }
   getUnits() async {
     units = await _sqfliteDBHelper.selectUnitsAll();
@@ -997,7 +922,6 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
     );
   }
 
-    //Future<bool>
     searchInputtedItem(String data)async{
     var x = await _sqfliteDBHelper.selectItemWhere(data);
     if (x.length > 0) {
@@ -1008,14 +932,12 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
       dtItemScanned = dateFormat.format(DateTime.now()) + " " + timeFormat.format(DateTime.now());
       convQty = int.parse(x[0]['conversion_qty']);
       if (mounted) setState(() {});
-  //  return Future<bool>.value(true);
     }else{
       itemCode = 'Unknown';
       itemDescription = 'Unknown';
       desc = 'Unknown';
       itemUOM = 'Unknown';
       if (mounted) setState(() {});
-   //   return Future<bool>.value(false);
     }
   }
 
@@ -1030,156 +952,5 @@ class _ItemScanningScreenState extends State<ItemScanningScreen> {
       print('FALSE NI SIYA');
       return false;
     }
-
   }
-
-
-//   searchInputtedItem(String value) async {
-//     print(GlobalVariables.byCategory);
-//     print(GlobalVariables.byVendor);
-// //------BY CATEGORY == TRUE AND BY VENDOR = TRUE------//
-//     if (GlobalVariables.byCategory == true &&
-//         GlobalVariables.byVendor == true) {
-//       print('//------BY CATEGORY == TRUE AND BY VENDOR = TRUE------//');
-//       var x = await _sqfliteDBHelper.selectItemWhereCatVen(value,
-//           "AND ggroup IN (${GlobalVariables.categories}) AND vendor_name IN (${GlobalVariables.vendors})");
-//       if (x.length > 0) {
-//         itemCode = x[0]['item_code'];
-//         itemDescription = x[0]['desc'];
-//         itemUOM = x[0]['uom'];
-//         dtItemScanned = dateFormat.format(DateTime.now()) +
-//             " " +
-//             timeFormat.format(DateTime.now());
-//         convQty = int.parse(x[0]['conversion_qty']);
-//         if (mounted) setState(() {});
-//         myFocusNodeQty.requestFocus();
-//       } else {
-//         // itemNotFoundModal(
-//         //     context,
-//         //     Icon(
-//         //       CupertinoIcons.exclamationmark_circle,
-//         //       color: Colors.red,
-//         //       size: 40,
-//         //     ),
-//         //     Text("Item not found. Reason(s): 1.) Barcode not registered 2.) Item is not belong to category ${GlobalVariables.categories} 3.) Item is not belong to vendor ${GlobalVariables.vendors}"));
-//         itemCode = "Unknown";
-//         itemDescription = "Unknown";
-//         itemUOM = 'Unknown';
-//         barcodeController.clear();
-//         if (mounted) setState(() {});
-//         myFocusNodeBarcode.requestFocus();
-//         qtyController.clear();
-//       }
-//     }
-// //------BY CATEGORY == TRUE AND BY VENDOR = TRUE------//
-// //------BY CATEGORY == FALSE AND BY VENDOR = FALSE------//
-//     if (GlobalVariables.byCategory == false &&
-//         GlobalVariables.byVendor == false) {
-//       print('//------BY CATEGORY == FALSE AND BY VENDOR = FALSE------//');
-//       var x = await _sqfliteDBHelper.selectItemWhere(value);
-//       print('VALUE : $value');
-//       if (x.length > 0) {
-//         itemCode = x[0]['item_code'];
-//         itemDescription = x[0]['desc'];
-//         itemUOM = x[0]['uom'];
-//         dtItemScanned = dateFormat.format(DateTime.now()) +
-//             " " +
-//             timeFormat.format(DateTime.now());
-//         convQty = int.parse(x[0]['conversion_qty']);
-//         if (mounted) setState(() {});
-//         myFocusNodeQty.requestFocus();
-//       } else {
-//        // showAlertDialog();
-//         // itemNotFoundModal(
-//         //     context,
-//         //     Icon(
-//         //       CupertinoIcons.exclamationmark_circle,
-//         //       color: Colors.red,
-//         //       size: 40,
-//         //     ),
-//         //     Text("Item not found. Reason(s): 1.) Barcode not registered"));
-//         itemCode = "Unknown";
-//         itemDescription = "Unknown";
-//         itemUOM = 'Unknown';
-//         barcodeController.clear();
-//         if (mounted) setState(() {});
-//         myFocusNodeBarcode.requestFocus();
-//         qtyController.clear();
-//       }
-//     }
-// //------BY CATEGORY == FALSE AND BY VENDOR = FALSE------//
-// //------BY CATEGORY == TRUE AND BY VENDOR = FALSE------//
-//     if (GlobalVariables.byCategory == true &&
-//         GlobalVariables.byVendor == false) {
-//       print('//------BY CATEGORY == TRUE AND BY VENDOR = FALSE------//');
-//       var x = await _sqfliteDBHelper.selectItemWhereCatVen(
-//           value, "AND ggroup IN (${GlobalVariables.categories})");
-//       if (x.length > 0) {
-//         itemCode = x[0]['item_code'];
-//         itemDescription = x[0]['desc'];
-//         itemUOM = x[0]['uom'];
-//         dtItemScanned = dateFormat.format(DateTime.now()) +
-//             " " +
-//             timeFormat.format(DateTime.now());
-//         convQty = int.parse(x[0]['conversion_qty']);
-//         if (mounted) setState(() {});
-//         myFocusNodeQty.requestFocus();
-//       } else {
-//         itemNotFoundModal(
-//             context,
-//             Icon(
-//               CupertinoIcons.exclamationmark_circle,
-//               color: Colors.red,
-//               size: 40,
-//             ),
-//             Text(
-//                 "Item not found. Reason(s): 1.) Barcode not registered 2.) Item is not belong to category ${GlobalVariables.categories}"));
-//         itemCode = "Unknown";
-//         itemDescription = "Unknown";
-//         itemUOM = 'Unknown';
-//         barcodeController.clear();
-//         if (mounted) setState(() {});
-//         myFocusNodeBarcode.requestFocus();
-//         qtyController.clear();
-//       }
-//     }
-// //------BY CATEGORY == TRUE AND BY VENDOR = FALSE------//
-// //------BY CATEGORY == FALSE AND BY VENDOR = TRUE------//
-//     if (GlobalVariables.byCategory == false &&
-//         GlobalVariables.byVendor == true) {
-//       print('//------BY CATEGORY == FALSE AND BY VENDOR = TRUE------//');
-//       var x = await _sqfliteDBHelper.selectItemWhereCatVen(
-//           value, "AND vendor_name IN (${GlobalVariables.vendors})");
-//       if (x.length > 0) {
-//         itemCode = x[0]['item_code'];
-//         itemDescription = x[0]['desc'];
-//         itemUOM = x[0]['uom'];
-//         dtItemScanned = dateFormat.format(DateTime.now()) +
-//             " " +
-//             timeFormat.format(DateTime.now());
-//         convQty = int.parse(x[0]['conversion_qty']);
-//         if (mounted) setState(() {});
-//         myFocusNodeQty.requestFocus();
-//       } else {
-//         print(x);
-//         itemNotFoundModal(
-//             context,
-//             Icon(
-//               CupertinoIcons.exclamationmark_circle,
-//               color: Colors.red,
-//               size: 40,
-//             ),
-//             Text(
-//                 "Item not found. Reason(s): 1.) Barcode not registered 2.) Item is not belong to vendor ${GlobalVariables.vendors}"));
-//         itemCode = "Unknown";
-//         itemDescription = "Unknown";
-//         itemUOM = 'Unknown';
-//         barcodeController.clear();
-//         if (mounted) setState(() {});
-//         myFocusNodeBarcode.requestFocus();
-//         qtyController.clear();
-//       }
-//     }
-// //------BY CATEGORY == FALSE AND BY VENDOR = TRUE------//
-//   }
 }

@@ -34,12 +34,10 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
   List _nfitems = [];
   List _auditTrail = [];
   List count_type=[];
-  // String count_type="";
   String _auditor = "";
   bool checkingNetwork = false;
   bool btn_sync = false;
   bool btn_close_click = true;
-  // late AnimationController animationController;
   Logs _log = Logs();
   DateFormat dateFormat = DateFormat("yyyy-MM-dd");
   DateFormat timeFormat = DateFormat("hh:mm:ss aaa");
@@ -59,7 +57,6 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
 
   @override
   Widget build(BuildContext context) {
-    // print(GlobalVariables.saveAuditSignature);
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -119,28 +116,13 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
                   ),
                 ),
               ),
-              // Flexible(
-              //     child: syncingStatus == false ? '' : syncingStatus==true ? AnimatedBuilder(
-              //       animation: animationController,
-              //          child: Icon(
-              //           CupertinoIcons.arrow_2_circlepath,
-              //           color: Colors.blue),
-              //           builder: (BuildContext context,
-              //           Widget? _widget) {
-              //       return new Transform.rotate(
-              //         angle: animationController.value * 40,
-              //         child: _widget,
-              //     );
-              //   },
-              //   )
-              // ),
             ],
           ),
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            checkingNetwork ? LinearProgressIndicator() : SizedBox(),
+            checkingNetwork ? LinearProgressIndicator(minHeight: 8.0) : SizedBox(),
             Spacer(),
             Center(
               child: Padding(
@@ -180,22 +162,13 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
                   GlobalVariables.isRovingITAccess = false;
                   if(btn_sync) {
                     btn_sync = false;
-                    //var res = "connected";
-
                     var res = await checkConnection();
                     print('RES: $res');
                     if (res == 'connected') {
                       final dataUser = await signatureUserGlobalKey.currentState!.toImage(pixelRatio: 2.0); //3.0
-
                       final bytesUser = await dataUser.toByteData(format: ui.ImageByteFormat.png);
-
                       final dataAudit = await signatureAuditGlobalKey.currentState!.toImage(pixelRatio: 2.0); //3.0
-
                       final bytesAudit = await dataAudit.toByteData(format: ui.ImageByteFormat.png);
-
-                      // print(signatureAuditGlobalKey.currentState!.toPathList());
-                      // if (bytesUser!.buffer.lengthInBytes == 6864 ||
-                      //     bytesAudit!.buffer.lengthInBytes == 6864) {
 
                       if (signatureUserGlobalKey.currentState!.toPathList().length == 0 ||
                           signatureAuditGlobalKey.currentState!.toPathList().length == 0) {
@@ -210,11 +183,6 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
                                 "User signature and Auditor signature are required to be signed before syncing."));
                         btn_sync = true;
                       } else {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(builder: (context) => SyncScreen(passbytesUser: bytesUser!.buffer.asUint8List().toString(),passbytesAudit: bytesAudit!.buffer.asUint8List().toString())),
-                        // ).then((result){
-                        // });
                         userSignature = base64Encode(bytesUser!.buffer.asUint8List());
                         auditSignature = base64Encode(bytesAudit!.buffer.asUint8List());
                         continueSync(base64Encode(bytesUser!.buffer.asUint8List()), base64Encode(bytesAudit!.buffer.asUint8List()));
@@ -256,13 +224,10 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
                 child: Container(
                     child: SfSignaturePad(
                       key: signatureUserGlobalKey,
-                      //backgroundColor: Colors.white,
                       strokeColor: Colors.black,
                       minimumStrokeWidth: 1.0,
                       maximumStrokeWidth: 4.0,
                       backgroundColor: Colors.transparent,
-                      // minimumStrokeWidth: 1.0,
-                      // maximumStrokeWidth: 4.0,
                     ),
 
                     height: 150,
@@ -296,23 +261,6 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
                   },
                   child: Text("Clear"),
                 ),
-                // TextButton(
-                //   onPressed: () async {
-                //     signatureAuditGlobalKey.currentState!.clear();
-                //     SharedPreferences prefss =
-                //         await SharedPreferences.getInstance();
-
-                //     final dataAudit = await signatureAuditGlobalKey
-                //         .currentState!
-                //         .toImage(pixelRatio: 3.0);
-                //     final bytesAudit = await dataAudit.toByteData(
-                //         format: ui.ImageByteFormat.png);
-
-                //     prefss.setString('saveAuditSignature',
-                //         base64Encode(bytesAudit!.buffer.asUint8List()));
-                //   },
-                //   child: Text("Save"),
-                // ),
               ],
             ),
             Padding(
@@ -401,7 +349,6 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
           res = await syncAuditTrail(items).timeout(timeLimit);
           break;
       }
-      //var res = await syncNfItem_adv(_nfitems, bytesUser, bytesAudit).timeout(timeLimit);
       if (GlobalVariables.statusCode == 200) {
         if(res == true){
           proceed = true;
@@ -466,15 +413,11 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
         Text(text));
   }
   continueSync(String bytesUser, String bytesAudit) async {
-    //bool proceed = true;
     var timeLimit = const Duration(seconds: 5);
     print(GlobalVariables.currentLocationID);
     checkingNetwork = true;
     if (mounted) setState(() {});
-    //var res = "connected";
     var res = await checkConnection();
-    // checkingNetwork = false;
-    // if (mounted) setState(() {});
 //-------------------CONNECTION CHECK!-----------------------
     if (res == 'error') {
       checkingNetwork = false;
@@ -514,7 +457,6 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
           if(_nfitems.length == 0 && _items.length == 0){
             checkingNetwork = false;
             if (mounted) setState(() {
-              // Navigator.pop(context);
             });
             instantMsgModal(
                 context,
@@ -529,9 +471,6 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
           else  {
             if (_nfitems.length > 0 && proceed) {
               print("NF ITEMS :: $_nfitems");
-              /*print("NF ITEMS :: $_nfitems");
-              print("NF ITEMS :: $_nfitems");*/
-
               //-------------try catch here 1--------------------
               await tryCatch("advance-NF-items", _nfitems);
               //-------------try catch end here 1--------------------
@@ -593,6 +532,7 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
               }
             }
           }
+
 //----------------------ACTUAL------------------------------
         }else if(count_type[0]['countType']=='ACTUAL'){
           if(_nfitems.length == 0 && _items.length == 0){
@@ -659,7 +599,7 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
                   btn_close_click = false;
                   Navigator.of(context).pop();
                 }
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(true);
                 instantMsgModal(
                     context,
                     Icon(
@@ -685,7 +625,6 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
             } else {
               checkingNetwork = false;
               if (mounted) setState(() {
-                //Navigator.pop(context);
               });
               instantMsgModal(
                   context,
@@ -698,12 +637,12 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
               btn_sync =true;
             }
           }
+
 //-------------------FREE GOODS------------------------
         }else{
           if(_nfitems.length == 0 && _items.length == 0){
             checkingNetwork = false;
             if (mounted) setState(() {
-              // Navigator.pop(context);
             });
             instantMsgModal(
                 context,
@@ -755,7 +694,6 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
               if (proceed) {
                 checkingNetwork = false;
                 if (mounted) setState(() {
-                  // Navigator.pop(context);
                 });
                 await _sqfliteDBHelper.updateTblAuditTrail();
                 if(btn_close_click){
@@ -788,7 +726,6 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
             } else {
               checkingNetwork = false;
               if (mounted) setState(() {
-                //Navigator.pop(context);
               });
               instantMsgModal(
                   context,
@@ -810,9 +747,10 @@ class _SyncScannedItemScreenState extends State<SyncScannedItemScreen> with Sing
         "SELECT itemcode, barcode, desc, description, uom, lot_number, expiry, qty, business_unit, department, section, rack_desc, datetimecreated, datetimesaved, location_id, conqty FROM ${ItemCount.tblItemCount} WHERE empno = '${GlobalVariables.logEmpNo}' AND business_unit = '${GlobalVariables.currentBusinessUnit}' AND department = '${GlobalVariables.currentDepartment}' AND section  = '${GlobalVariables.currentSection}' AND rack_desc  = '${GlobalVariables.currentRackDesc}' AND location_id = '${GlobalVariables.currentLocationID}' AND exported != 'EXPORTED'");
     print("ITEMS :: $_items");
   }
+
   _getCountedNfItems() async {
     _nfitems = await _sqfliteDBHelper.selectItemNotFoundRawQuery(
-        "SELECT barcode, inputted_description, itemcode, uom, lot_number, expiry, qty,location, datetimecreated,business_unit,department,section,empno,rack_desc,description FROM ${ItemNotFound.tblItemNotFound} WHERE empno = '${GlobalVariables.logEmpNo}' AND business_unit = '${GlobalVariables.currentBusinessUnit}' AND department = '${GlobalVariables.currentDepartment}' AND section  = '${GlobalVariables.currentSection}' AND rack_desc  = '${GlobalVariables.currentRackDesc}' AND location = '${GlobalVariables.currentLocationID}' AND exported != 'EXPORTED'");
+        "SELECT barcode, inputted_description, itemcode, uom, lot_number, expiry, qty,location, datetimecreated, business_unit, department, section, empno, rack_desc, description FROM ${ItemNotFound.tblItemNotFound} WHERE empno = '${GlobalVariables.logEmpNo}' AND business_unit = '${GlobalVariables.currentBusinessUnit}' AND department = '${GlobalVariables.currentDepartment}' AND section  = '${GlobalVariables.currentSection}' AND rack_desc  = '${GlobalVariables.currentRackDesc}' AND location = '${GlobalVariables.currentLocationID}' AND exported != 'EXPORTED'");
   }
 
   _getCountType()async{

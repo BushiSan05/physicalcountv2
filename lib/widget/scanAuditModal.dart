@@ -15,6 +15,8 @@ scanAuditModal(BuildContext context, SqfliteDBHelper db, String details) {
   DateFormat dateFormat = DateFormat("yyyy-MM-dd");
   DateFormat timeFormat = DateFormat("hh:mm:ss aaa");
   bool obscureAuditENumber = true;
+  final validCharacters = RegExp(r'^[0-9]+$');
+
   return showModalBottomSheet(
     // isDismissible: false,
     isScrollControlled: true,
@@ -64,13 +66,13 @@ scanAuditModal(BuildContext context, SqfliteDBHelper db, String details) {
                         children: <Widget>[
                           auditempnoController.text.isNotEmpty
                               ? IconButton(
-                            onPressed: () {
-                              auditempnoController.clear();
-                              setModalState(() {});
-                            },
-                            icon: Icon(
-                              CupertinoIcons.xmark_circle_fill,
-                              color: Colors.red,
+                              onPressed: () {
+                                auditempnoController.clear();
+                                setModalState(() {});
+                              },
+                                icon: Icon(
+                                  CupertinoIcons.xmark_circle_fill,
+                                  color: Colors.red,
                             ),
                           )
                               : SizedBox(),
@@ -92,9 +94,19 @@ scanAuditModal(BuildContext context, SqfliteDBHelper db, String details) {
                       setModalState(() {});
                     },
                     onSubmitted: (value) async {
-                      // myFocusNodeAuditEmpNo.requestFocus();
-                      // onPressLogin();
                       if (value.isNotEmpty) {
+                        if(validCharacters.hasMatch(value)==false){
+                          instantMsgModal(
+                              context,
+                              Icon(
+                                CupertinoIcons.exclamationmark_circle,
+                                color: Colors.red,
+                                size: 40,
+                              ),
+                              Text("Invalid Input."));
+                          auditempnoController.clear();
+                          myFocusNodeAuditEmpNo.requestFocus();
+                        }
                         var ls = await db.selectAuditWhere(
                             auditempnoController.text.trim(),
                             GlobalVariables.currentLocationID);

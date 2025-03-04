@@ -46,7 +46,6 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
     }
   }
 
-
   @override
   void initState() {
     ableEditDelete = GlobalVariables.ableEditDelete;
@@ -85,11 +84,9 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
     }
   }
 
-
   void sortItemsByDateTimeSavedDesc() {
     itemNotFound.sort((a, b) => b.dateTimeCreated!.compareTo(a.dateTimeCreated!));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -276,24 +273,6 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
                                 ],
                               ),
                             ),
-                            // RichText(
-                            //   text: TextSpan(
-                            //     children: [
-                            //       TextSpan(
-                            //           text: "Batch Number: ",
-                            //           style: TextStyle(
-                            //               fontSize: 15,
-                            //               color: Colors.blue,
-                            //               fontWeight:
-                            //               FontWeight.bold)),
-                            //       TextSpan(
-                            //           text: "${_notSyncNF[index]['batch_number']}",
-                            //           style: TextStyle(
-                            //               fontSize: 15,
-                            //               color: Colors.black))
-                            //     ],
-                            //   ),
-                            // ),
                             GlobalVariables.countType == 'ANNUAL'
                                 ? RichText(
                               text: TextSpan(
@@ -368,7 +347,6 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
                                               _notSyncNF[index]['inputted_description'].toString(),
                                               _notSyncNF[index]['uom'].toString(),
                                               _notSyncNF[index]['lot_number'].toString(),
-                                              // _notSyncNF[index]['batch_number'].toString(),
                                               _notSyncNF[index]['expiry'].toString(),
                                               _notSyncNF[index]['qty'].toString(),
                                               units,
@@ -416,7 +394,6 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
                                             GlobalVariables.isAuditLogged = false;
                                             await scanAuditModal(context, _sqfliteDBHelper, dtls);
                                             if (GlobalVariables.isAuditLogged == true) {
-                                              //delte code here
                                               delete(_notSyncNF[index]['id'], index);
                                             }
                                           },
@@ -452,7 +429,7 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
                                 Text(
                                     _notSyncNF[index]['exported'] == 'true'
                                         ? "Synced to Server Database"
-                                        : "Not synced to Server Database",
+                                        : "Not synced to Database",
                                     style: TextStyle(
                                         fontSize: 15,
                                         color: Colors.black))
@@ -574,24 +551,6 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
                                 ],
                               ),
                             ),
-                            // RichText(
-                            //   text: TextSpan(
-                            //     children: [
-                            //       TextSpan(
-                            //           text: "Batch Number: ",
-                            //           style: TextStyle(
-                            //               fontSize: 14,
-                            //               color: Colors.blue,
-                            //               fontWeight:
-                            //               FontWeight.bold)),
-                            //       TextSpan(
-                            //           text: "${itemNotFound[index].batno!}",
-                            //           style: TextStyle(
-                            //               fontSize: 14,
-                            //               color: Colors.black))
-                            //     ],
-                            //   ),
-                            // ),
                             GlobalVariables.countType == 'ANNUAL'
                                 ? RichText(
                               text: TextSpan(
@@ -672,7 +631,6 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
                                               itemNotFound[index].inputted_desc ?? '',
                                               itemNotFound[index].uom!,
                                               itemNotFound[index].lotno ?? '',
-                                              // itemNotFound[index].batno!,
                                               itemNotFound[index].expiry ?? '',
                                               itemNotFound[index].qty!,
                                               units,
@@ -757,7 +715,7 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
                                 Text(
                                     itemNotFound[index].exported == 'EXPORTED'
                                         ? "Synced to Server Database"
-                                        : "Not synced to Server Database",
+                                        : "Not synced to Database",
                                     style: TextStyle(
                                         fontSize: 15,
                                         color: Colors.black))
@@ -791,15 +749,6 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
             ),
           ],
         ),
-        // floatingActionButton: FloatingActionButton(
-        //   backgroundColor: Colors.white,
-        //   onPressed: () async {
-        //     await saveNotFoundItemModal(context, _sqfliteDBHelper, units);
-        //     _refreshItemList();
-        //   },
-        //   child: Icon(CupertinoIcons.plus),
-        //   foregroundColor: Colors.red,
-        // ),
       ),
     );
   }
@@ -827,7 +776,6 @@ class _ItemNotFoundScanScreenState extends State<ItemNotFoundScanScreen> {
   _refreshItemList() async {
     List<ItemNotFound> x = await _sqfliteDBHelper.fetchItemNotFoundWhere(
         "empno = '${GlobalVariables.logEmpNo}' AND business_unit = '${GlobalVariables.currentBusinessUnit}' AND department = '${GlobalVariables.currentDepartment}' AND section  = '${GlobalVariables.currentSection}' AND rack_desc  = '${GlobalVariables.currentRackDesc}' AND location = '${GlobalVariables.currentLocationID}' AND exported != 'EXPORTED'");
-    // itemNotFound = x;
     if (mounted) setState(() { itemNotFound = x;});
   }
 

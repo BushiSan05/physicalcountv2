@@ -38,17 +38,13 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
     if (dateStr == null) {
       return "null";
     }
-
     try {
       final parsedDate = DateTime.parse(dateStr);
       return DateFormat('yyyy-MM-dd').format(parsedDate);
     } catch (e) {
-      // Handle the parsing error, e.g., log it or return a default value.
       return "null";
     }
   }
-
-
 
   @override
   void initState() {
@@ -93,7 +89,6 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
   void sortItemsByDateTimeSavedDesc() {
     _items.sort((a, b) => b.dateTimeSaved!.compareTo(a.dateTimeSaved!));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +141,6 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                             barrierDismissible: false,
                             context: context,
                             builder: (BuildContext context) {
-                              // return object of type Dialog
                               return CupertinoAlertDialog(
                                 title: new Text("Search item"),
                                 content: new CupertinoTextField(
@@ -157,7 +151,6 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                   keyboardType: TextInputType.number,
                                   controller: _textController,
                                   autofocus: true,
-                                  //  onChanged: _onSearched,
                                 ),
                                 actions: <Widget>[
                                   new TextButton(
@@ -200,7 +193,7 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                 ? loading()
                 : _notSynced.length > 0
                 ? Expanded(
-              child: Scrollbar(
+                  child: Scrollbar(
 //==============================================================================================================================
                 //<-------------------------------------SEARCH LISTVIEW FOR SCANNED ITEMS----------------------------------------------------------------->
 //================================================================================================================================
@@ -267,7 +260,7 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                 ),
                               ],
                             ),
-// Check if _items2[index]['desc'] should be displayed
+                          // Check if _items2[index]['desc'] should be displayed
                             if (_items2[index]['description'] != _items2[index]['desc'] &&
                                 _items2[index]['desc'] != "")
                               Row(
@@ -359,26 +352,6 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                 ],
                               ),
                             ),
-                            // RichText(
-                            //   text: TextSpan(
-                            //     children: [
-                            //       TextSpan(
-                            //           text: "Batch Number: ",
-                            //           style: TextStyle(
-                            //               fontSize: 14,
-                            //               color: Colors.blue,
-                            //               fontWeight:
-                            //               FontWeight.bold)),
-                            //       TextSpan(
-                            //           text: _items2[index]['batch_number'],
-                            //           style: TextStyle(
-                            //               fontSize: 14,
-                            //               color: Colors.black))
-                            //     ],
-                            //   ),
-                            // ),
-                            // GlobalVariables.countType == 'ANNUAL'
-                            //     ?
                             RichText(
                               text: TextSpan(
                                 children: [
@@ -400,7 +373,6 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                 ],
                               ),
                             ),
-                                // :
                             SizedBox(),
                             RichText(
                               text: TextSpan(
@@ -458,7 +430,6 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                               _items2[index]['itemcode'].toString(),
                                               _items2[index]['uom'].toString(),
                                               _items2[index]['lot_number'].toString(),
-                                              // _items2[index]['batno'].toString(),
                                               _items2[index]['expiry'].toString(),
                                               _items2[index]['qty'].toString(),
                                               _items2[index]['conqty'].toString(),
@@ -503,7 +474,6 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                             GlobalVariables.isAuditLogged = false;
                                             await scanAuditModal(context, _sqfliteDBHelper, dtls);
                                             if (GlobalVariables.isAuditLogged == true) {
-                                              //delte code here
                                               delete( _items2[index]['id'],index);
                                               Fluttertoast.showToast(msg: 'Item Successfully Deleted!',
                                                   toastLength: Toast.LENGTH_LONG,
@@ -540,7 +510,7 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                 ),
                                 Text( _items2[index]['exported'].toString() == 'EXPORTED'
                                     ? "Synced to Server Database"
-                                    : "Not synced to Server Database",
+                                    : "Not synced to Database",
                                     style: TextStyle(
                                         fontSize: 15,
                                         color: Colors.black))
@@ -625,7 +595,7 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                 ),
                               ],
                             ),
-// Check if _items[index].desc should be displayed
+                        // Check if _items[index].desc should be displayed
                             if (_items[index].description != _items[index].desc &&
                                 _items[index].desc != "")
                               Row(
@@ -635,7 +605,7 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.blue, // Set the color here
+                                      color: Colors.blue,
                                     ),
                                   ),
                                   Flexible(
@@ -722,26 +692,6 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                 ],
                               ),
                             ),
-                            // RichText(
-                            //   text: TextSpan(
-                            //     children: [
-                            //       TextSpan(
-                            //           text: "Batch Number: ",
-                            //           style: TextStyle(
-                            //               fontSize: 14,
-                            //               color: Colors.blue,
-                            //               fontWeight:
-                            //               FontWeight.bold)),
-                            //       TextSpan(
-                            //           text: "${_items[index].batno!}",
-                            //           style: TextStyle(
-                            //               fontSize: 14,
-                            //               color: Colors.black))
-                            //     ],
-                            //   ),
-                            // ),
-                            // GlobalVariables.countType == 'ANNUAL'
-                            //     ?
                             RichText(
                               text: TextSpan(
                                 children: [
@@ -820,7 +770,6 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                               _items[index].itemcode!,
                                               _items[index].uom!,
                                               _items[index].lotno ?? '',
-                                              // _items[index].batno!,
                                               _items[index].expiry ?? '',
                                               _items[index].qty!,
                                               _items[index].conqty!,
@@ -863,7 +812,6 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                             GlobalVariables.isAuditLogged = false;
                                             await scanAuditModal(context, _sqfliteDBHelper, dtls);
                                             if (GlobalVariables.isAuditLogged == true) {
-                                              //delte code here
                                               delete(_items[index].id!, index);
                                               Fluttertoast.showToast(msg: 'Item Successfully Deleted!',
                                                   toastLength: Toast.LENGTH_LONG,
@@ -905,7 +853,7 @@ class _ItemScannedListScreenState extends State<ItemScannedListScreen> {
                                 Text(
                                     _items[index].exported == 'EXPORTED'
                                         ? "Synced to Server Database"
-                                        : "Not synced to Server Database",
+                                        : "Not synced to Database",
                                     style: TextStyle(
                                         fontSize: 15,
                                         color: Colors.black))

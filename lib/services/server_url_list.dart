@@ -7,7 +7,6 @@ class ServerUrlList{
                                 'ALTA CITTA'       : 'http://172.16.163.2:81/pcount_app/pcount_alta/',
                                 'DISTRIBUTION'     : 'http://172.16.163.2:81/pcount_app/pcount_pdc/',
                                 'URC'              : 'http://172.16.163.2:81/pcount_app/pcount_urc/',
-
                                 'PLAZA MARCELA'    : 'http://172.16.163.2:81/pcount_app/pcount_pm/',};
 
 

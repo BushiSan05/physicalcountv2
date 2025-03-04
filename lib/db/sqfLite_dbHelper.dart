@@ -673,6 +673,13 @@ class SqfliteDBHelper {
         ? []
         : itemCount.map((e) => ItemCount.fromMap(e)).toList();
   }
+  Future<List<ItemNotFound>> fetchNfItemCountWhere(String where) async {
+    Database db = await database;
+    List<Map<String, Object?>> nfitemCount = await db.query(ItemNotFound.tblItemNotFound, where: where);
+    return nfitemCount.length == 0
+        ? []
+        : nfitemCount.map((e) => ItemNotFound.fromMap(e)).toList();
+  }
 
 
   Future<int> deleteItemCountWhere(int id) async {

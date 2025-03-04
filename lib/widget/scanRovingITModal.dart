@@ -37,7 +37,7 @@ scanRovingITModal(BuildContext context, SqfliteDBHelper db) {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
-                    child: Text("SCAN ROVING-IT BARCODE NUMBER TO CONTINUE",
+                    child: Text("SCAN ROVING-IT BARCODE TO CONTINUE",
                         style: TextStyle(color: Colors.black, fontSize: 25)),
                   ),
                   TextField(
@@ -58,7 +58,7 @@ scanRovingITModal(BuildContext context, SqfliteDBHelper db) {
                         color: Colors.black,
                       ),
                       hintStyle: TextStyle(color: Colors.grey[400]),
-                      hintText: 'Roving-IT Barcode Number',
+                      hintText: 'Roving-IT Barcode',
                       suffixIcon: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
@@ -115,7 +115,7 @@ scanRovingITModal(BuildContext context, SqfliteDBHelper db) {
                                 color: Colors.red,
                                 size: 40,
                               ),
-                              Text("Roving-IT Barcode Number not found."));
+                              Text("Roving-IT Barcode not found."));
                           auditempnoController.clear();
                           myFocusNodeAuditEmpNo.requestFocus();
                         }
@@ -127,7 +127,7 @@ scanRovingITModal(BuildContext context, SqfliteDBHelper db) {
                               color: Colors.red,
                               size: 40,
                             ),
-                            Text("Roving-IT Barcode Number not found."));
+                            Text("Roving-IT Barcode not found."));
                         auditempnoController.clear();
                         myFocusNodeAuditEmpNo.requestFocus();
                       }

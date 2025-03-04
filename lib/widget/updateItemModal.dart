@@ -71,13 +71,32 @@ updateItemModal(
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate ?? DateTime.now(),
+      initialDate: selectedDate ?? DateTime.now(), // Use DateTime.now() if selectedDate is null
       firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
     );
     if (picked != null) {
-      selectedDate = picked;
+      DateTime today = DateTime.now();
+      if (picked.isBefore(DateTime(today.year, today.month, today.day))) {
+        showCupertinoDialog(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: Text("Expired Item"),
+            content: Text("You have selected an expired date."),
+            actions: [
+              CupertinoDialogAction(
+                child: Text("Proceed"),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+        );
+        selectedDate = picked;
+      } else {
+        selectedDate = picked;
+      }
     }
+    print("ang selected date ni $selectedDate");
   }
 
 
@@ -89,7 +108,7 @@ updateItemModal(
       return StatefulBuilder(
         builder: (BuildContext context, StateSetter setModalState) {
           return Container(
-            height: BodySize.hghth / 1.3,
+            height: BodySize.hghth / 1.6,
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
